@@ -39,6 +39,27 @@ body {
 .smart-header { background: #fff; padding: 16px 20px 0; }
 .smart-header h1 { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .home-select { font-size: 14px; color: #666; }
+/* Fixed '+' button in header */
+.header-add-btn {
+  position: absolute; top: 54px; right: 20px; width: 32px; height: 32px; border-radius: 8px;
+  font-size: 22px; font-weight: 500; color: #2196F3; cursor: pointer; background: #f0f7ff;
+  border: none; display: flex; align-items: center; justify-content: center; z-index: 50;
+  transition: background 0.2s;
+}
+.header-add-btn:hover { background: #e0f0ff; }
+/* Add dropdown */
+.add-dropdown {
+  display: none; position: absolute; top: 92px; right: 20px; background: #fff;
+  border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); z-index: 200;
+  overflow: hidden; min-width: 160px;
+}
+.add-dropdown.show { display: block; }
+.add-dropdown-item {
+  padding: 12px 20px; font-size: 14px; color: #333; cursor: pointer;
+  transition: background 0.15s; border-bottom: 1px solid #f5f5f5;
+}
+.add-dropdown-item:last-child { border-bottom: none; }
+.add-dropdown-item:hover { background: #f5f5f5; }
 .tab-bar { display: flex; gap: 0; background: #fff; padding: 12px 20px 0; }
 .tab-item { padding: 8px 0; margin-right: 24px; font-size: 15px; color: #999; cursor: pointer;
   border-bottom: 2px solid transparent; font-weight: 500; }
@@ -68,7 +89,7 @@ body {
 /* Section Titles */
 .section-title-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px 12px;
+  padding: 16px 20px 12px; padding-right: 56px;
 }
 .section-title { font-size: 17px; font-weight: 700; color: #333; }
 .section-title-row {
@@ -687,6 +708,12 @@ body {
     <div class="page active" id="pageMain">
       <div class="smart-header">
         <h1>&#8801; home1 <span class="home-select">&#9662;</span></h1>
+        <div class="header-add-btn" onclick="toggleAddDropdown()">&#43;</div>
+      </div>
+      <!-- Add dropdown menu -->
+      <div class="add-dropdown" id="addDropdown">
+        <div class="add-dropdown-item" onclick="startGuidedSetup(); closeAddDropdown();">Add Mode</div>
+        <div class="add-dropdown-item" onclick="navigateTo('pageAddAutomation'); closeAddDropdown();">Add Automation</div>
       </div>
       <div class="tab-bar">
         <div class="tab-item active">My Scenes</div>
@@ -750,15 +777,6 @@ body {
                 <div class="scene-card-left">
                   <div class="scene-icon disarm">&#128737;&#65039;</div>
                   <div><div class="scene-name">Disarm</div><div class="scene-status">5 devices</div></div>
-                </div>
-                <div class="scene-card-right">
-                  <button class="scene-settings" onclick="event.stopPropagation(); navigateTo('pageEditGroup')">&#9881;&#65039;</button>
-                </div>
-              </div>
-              <div class="scene-card" onclick="showSwitchModal('Vacation')">
-                <div class="scene-card-left">
-                  <div class="scene-icon custom">&#127796;</div>
-                  <div><div class="scene-name">Vacation</div><div class="scene-status">Custom &middot; 3 devices</div></div>
                 </div>
                 <div class="scene-card-right">
                   <button class="scene-settings" onclick="event.stopPropagation(); navigateTo('pageEditGroup')">&#9881;&#65039;</button>
@@ -847,7 +865,7 @@ body {
             <div class="setup-ground"></div>
           </div>
           <div class="setup-ill-title">Home Mode</div>
-          <div class="setup-ill-desc">家人在家时，保护室内隐私并监控室外安全</div>
+          <div class="setup-ill-desc">Protect indoor privacy and monitor outdoor safety when family is at home</div>
         </div>
         <div class="device-section" id="homeDevices"></div>
       </div>
@@ -887,7 +905,7 @@ body {
             <div class="setup-ground"></div>
           </div>
           <div class="setup-ill-title">Away Mode</div>
-          <div class="setup-ill-desc">离家时，全面监控室内外安全，记录所有异常事件</div>
+          <div class="setup-ill-desc">Monitor all areas with full security when everyone is away</div>
         </div>
         <div class="device-section" id="awayDevices"></div>
       </div>
@@ -1570,6 +1588,19 @@ function updateTime() {
 }
 updateTime();
 setInterval(updateTime, 60000);
+
+// ========== Add Dropdown ==========
+function toggleAddDropdown() {
+  document.getElementById('addDropdown').classList.toggle('show');
+}
+function closeAddDropdown() {
+  document.getElementById('addDropdown').classList.remove('show');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.header-add-btn') && !e.target.closest('.add-dropdown')) {
+    closeAddDropdown();
+  }
+});
 </script>
 
 </body>
