@@ -41,7 +41,7 @@ body {
 .home-select { font-size: 14px; color: #666; }
 /* Fixed '+' button in header */
 .header-add-btn {
-  position: absolute; top: 54px; right: 20px; width: 32px; height: 32px; border-radius: 8px;
+  position: absolute; top: 16px; right: 20px; width: 32px; height: 32px; border-radius: 8px;
   font-size: 22px; font-weight: 500; color: #2196F3; cursor: pointer; background: #f0f7ff;
   border: none; display: flex; align-items: center; justify-content: center; z-index: 50;
   transition: background 0.2s;
@@ -49,7 +49,7 @@ body {
 .header-add-btn:hover { background: #e0f0ff; }
 /* Add dropdown */
 .add-dropdown {
-  display: none; position: absolute; top: 92px; right: 20px; background: #fff;
+  display: none; position: absolute; top: 54px; right: 20px; background: #fff;
   border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); z-index: 200;
   overflow: hidden; min-width: 160px;
 }
@@ -89,13 +89,9 @@ body {
 /* Section Titles */
 .section-title-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px 12px; padding-right: 56px;
-}
-.section-title { font-size: 17px; font-weight: 700; color: #333; }
-.section-title-row {
-  display: flex; align-items: center; justify-content: space-between;
   padding: 16px 20px 12px;
 }
+.section-title { font-size: 17px; font-weight: 700; color: #333; }
 
 /* Mode empty state */
 .mode-empty-card {
@@ -712,7 +708,7 @@ body {
       </div>
       <!-- Add dropdown menu -->
       <div class="add-dropdown" id="addDropdown">
-        <div class="add-dropdown-item" onclick="startGuidedSetup(); closeAddDropdown();">Add Mode</div>
+        <div class="add-dropdown-item" onclick="openAddMode(); closeAddDropdown();">Add Mode</div>
         <div class="add-dropdown-item" onclick="navigateTo('pageAddAutomation'); closeAddDropdown();">Add Automation</div>
       </div>
       <div class="tab-bar">
@@ -793,9 +789,7 @@ body {
           </div>
           <div class="automation-empty">
             <div class="automation-empty-icon">&#9881;&#65039;</div>
-            <div class="automation-empty-title">Make Your Home Smarter</div>
-            <div class="automation-empty-desc">Automatically control devices when things happen</div>
-            <button class="automation-add-btn" onclick="navigateTo('pageAddAutomation')">+ Add Automation</button>
+            <div class="automation-empty-title">Automatically control devices when things happen</div>
           </div>
         </div>
 
@@ -941,7 +935,7 @@ body {
             <div class="setup-ground" style="background: linear-gradient(180deg, #e0e0e0 0%, #bdbdbd 100%);"></div>
           </div>
           <div class="setup-ill-title">Disarmed Mode</div>
-          <div class="setup-ill-desc">需要完全隐私时，关闭所有监控和录制功能</div>
+          <div class="setup-ill-desc">Turn off all monitoring and recording when complete privacy is needed</div>
         </div>
         <div class="device-section" id="disarmDevices"></div>
       </div>
@@ -989,6 +983,22 @@ body {
             <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#129726;</div><div class="setting-label">Monitoring Center Help</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
           </div>
           <div class="help-link">Learn how to set it up &gt;&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: Add Custom Mode ===== -->
+    <div class="page" id="pageAddMode">
+      <div class="detail-header">
+        <button class="back-btn" onclick="navigateTo('pageMain')">&#8592;</button>
+        <input class="detail-title-input" id="customModeName" type="text" value="Custom">
+      </div>
+      <div class="screen-inner">
+        <div class="device-section" id="customModeDevices">
+          <!-- Filled dynamically -->
+        </div>
+        <div style="padding:0 20px 20px;margin-top:20px;">
+          <button onclick="saveCustomMode()" style="display:block;width:100%;padding:14px;border-radius:12px;border:none;background:#2196F3;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Save</button>
         </div>
       </div>
     </div>
@@ -1588,6 +1598,87 @@ function updateTime() {
 }
 updateTime();
 setInterval(updateTime, 60000);
+
+// ========== Custom Mode Creation ==========
+function openAddMode() {
+  document.getElementById('customModeName').value = 'Custom';
+  populateCustomModeDevices();
+  navigateTo('pageAddMode');
+}
+
+function populateCustomModeDevices() {
+  const container = document.getElementById('customModeDevices');
+  container.innerHTML = '';
+  DEVICES.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'device-card';
+    card.onclick = (e) => {
+      const cb = card.querySelector('.device-checkbox');
+      if (!cb.classList.contains('checked')) {
+        // First check: toggle checkbox
+        cb.classList.add('checked');
+        const modeLabel = card.querySelector('.device-mode');
+        modeLabel.textContent = 'Custom mode';
+        modeLabel.classList.remove('disarmed');
+      }
+      // Open device detail for configuration
+      openCustomDeviceDetail(d);
+    };
+    card.innerHTML =
+      '<div class="device-checkbox" onclick="event.stopPropagation(); toggleCheck(this)"></div>' +
+      '<div class="device-thumb">' + d.icon + '</div>' +
+      '<div class="device-info">' +
+        '<div class="device-name">' + d.name + '</div>' +
+        '<div class="device-mode disarmed">not managed</div>' +
+      '</div>' +
+      '<div class="device-arrow">&#8250;</div>';
+    container.appendChild(card);
+  });
+}
+
+function openCustomDeviceDetail(device) {
+  document.getElementById('deviceDetailTitle').textContent = device.name;
+  document.getElementById('deviceDetailIcon').innerHTML = device.icon;
+  document.getElementById('deviceDetailName').textContent = device.name;
+  document.getElementById('devModeText').textContent = 'Custom';
+  currentDeviceDisarmed = false;
+  document.getElementById('devDisarmBtn').classList.remove('checked');
+  document.getElementById('devSettingsArea').classList.remove('disabled');
+  document.getElementById('deviceDetailBack').onclick = () => {
+    navigateTo('pageAddMode');
+  };
+  navigateTo('pageDeviceDetail');
+}
+
+function saveCustomMode() {
+  // Add the new custom scene card
+  const modeName = document.getElementById('customModeName').value || 'Custom';
+  const checkedCards = document.querySelectorAll('#customModeDevices .device-checkbox.checked');
+  const deviceCount = checkedCards.length;
+
+  const sceneCardsArea = document.getElementById('sceneCardsArea');
+  const sceneSection = sceneCardsArea.querySelector('.scene-section');
+
+  // Remove existing custom cards
+  sceneSection.querySelectorAll('.scene-card[data-custom="true"]').forEach(c => c.remove());
+
+  const card = document.createElement('div');
+  card.className = 'scene-card';
+  card.setAttribute('data-custom', 'true');
+  card.onclick = () => showSwitchModal(modeName);
+  card.innerHTML =
+    '<div class="scene-card-left">' +
+      '<div class="scene-icon custom">&#127947;</div>' +
+      '<div><div class="scene-name">' + modeName + '</div><div class="scene-status">' + deviceCount + ' devices</div></div>' +
+    '</div>' +
+    '<div class="scene-card-right">' +
+      '<button class="scene-settings" onclick="event.stopPropagation(); navigateTo(\'pageEditGroup\')">&#9881;&#65039;</button>' +
+    '</div>';
+  sceneSection.appendChild(card);
+
+  showPopulatedMain();
+  showToast('"' + modeName + '" mode saved!');
+}
 
 // ========== Add Dropdown ==========
 function toggleAddDropdown() {
