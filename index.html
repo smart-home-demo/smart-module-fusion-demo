@@ -36,7 +36,7 @@ body {
 .page.active { display: flex; }
 
 /* Header */
-.smart-header { background: #fff; padding: 16px 20px 0; }
+.smart-header { background: #fff; padding: 16px 20px 0; position: relative; }
 .smart-header h1 { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .home-select { font-size: 14px; color: #666; }
 /* Fixed '+' button in header */
@@ -194,8 +194,16 @@ body {
 }
 .setup-ill-scene {
   width: 100%; height: 180px; border-radius: 16px; overflow: hidden;
-  background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
   position: relative; margin-bottom: 14px;
+}
+.scene-home .setup-ill-scene {
+  background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
+}
+.scene-away .setup-ill-scene {
+  background: linear-gradient(180deg, #ffebee 0%, #ffcdd2 100%);
+}
+.scene-disarm .setup-ill-scene {
+  background: linear-gradient(180deg, #f5f5f5 0%, #e0e0e0 100%);
 }
 .setup-ground {
   position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
@@ -237,6 +245,14 @@ body {
 .scene-home .scene-device:nth-child(1) { top: 20px; left: 16px; }
 .scene-home .scene-device:nth-child(2) { top: 50px; right: 20px; }
 .scene-home .scene-device:nth-child(3) { top: 80px; left: 10px; }
+/* Home mode red zone around house */
+.home-red-zone {
+  position: absolute;
+  top: 15px; left: 15px; right: 15px; bottom: 30px;
+  border: 3px dashed #ff5252; border-radius: 20px;
+  opacity: 0.5;
+  z-index: 5; pointer-events: none;
+}
 .scene-away .scene-device:nth-child(1) { top: 16px; left: 16px; }
 .scene-away .scene-device:nth-child(2) { top: 16px; right: 16px; }
 .scene-away .scene-device:nth-child(3) { top: 50px; left: 10px; }
@@ -326,7 +342,197 @@ body {
 }
 .automation-add-btn:hover { background: #1976D2; }
 
-/* Empty state */
+/* Automation cards */
+.automation-card {
+  background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 10px;
+  border: 1px solid #f0f0f0;
+}
+.automation-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.automation-card-title { font-size: 15px; font-weight: 600; color: #333; }
+.automation-card-value { font-size: 13px; color: #2196F3; text-align:right; }
+.automation-card-value span { color: #999; font-size: 12px; }
+.automation-card-row {
+  display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+}
+.automation-add-mini {
+  width: 24px; height: 24px; border-radius: 50%; border: none; background: #2196F3;
+  color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; line-height: 1;
+}
+.automation-empty-text { font-size: 13px; color: #999; }
+.automation-error { font-size: 12px; color: #e53935; padding-left: 4px; }
+
+/* Trigger rows */
+.automation-trigger-row {
+  display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+  padding: 12px 0;
+}
+.automation-trigger-row + .automation-trigger-row {
+  border-top: 1px solid #f5f5f5;
+}
+.automation-trigger-left { display: flex; align-items: center; gap: 12px; }
+.automation-trigger-name { font-size: 14px; font-weight: 500; color: #333; }
+.automation-trigger-sub { font-size: 12px; color: #999; margin-top: 2px; }
+.automation-arrow { color: #ccc; font-size: 16px; }
+
+/* Calendar grid */
+.calendar-header-row {
+  display: grid; grid-template-columns: 40px repeat(7, 1fr); padding: 8px 0;
+  background: #fafafa; text-align: center;
+}
+.calendar-time-label { font-size: 9px; color: #bbb; text-align: right; padding-right: 4px; display: flex; align-items: flex-start; justify-content: flex-end; padding-top: 2px; }
+.calendar-day-label { font-size: 10px; color: #999; font-weight: 500; }
+#calendarGridBody {
+  display: grid; grid-template-columns: 40px repeat(7, 1fr); min-height: 288px;
+}
+.calendar-row { display: contents; }
+.calendar-time-cell {
+  min-height: 12px; border: 1px solid #f5f5f5; border-right: none; border-bottom: none;
+  position: relative;
+}
+.calendar-time-cell:nth-child(8n) { border-right: none; }
+.calendar-day-cell {
+  min-height: 12px; border: 1px solid #f5f5f5; border-right: none; border-bottom: none;
+  position: relative; cursor: default;
+}
+.calendar-day-cell:nth-child(8n) { border-right: none; }
+.calendar-day-cell .calendar-time-block {
+  position: absolute; left: 1px; right: 1px; border-radius: 2px;
+  z-index: 2; cursor: pointer;
+}
+.calendar-time-block.block-home { background: #4caf50; }
+.calendar-time-block.block-away { background: #e91e63; }
+.calendar-time-block.block-disarm { background: #9e9e9e; }
+
+/* Repeat day buttons */
+.repeat-day-btn {
+  padding: 6px 0; border-radius: 8px; font-size: 13px; cursor: pointer;
+  border: 1px solid #e0e0e0; background: #fff; color: #666; flex: 1; text-align: center;
+  transition: all 0.2s;
+}
+.repeat-day-btn.active { background: #2196F3; color: #fff; border-color: #2196F3; }
+
+/* Mode list */
+.mode-list-card {
+  background: #fff; border-radius: 12px; margin: 16px 20px 12px; overflow: hidden;
+}
+.mode-list-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid #f5f5f5; cursor: pointer;
+  font-size: 15px; color: #333;
+}
+.mode-list-item:last-child { border-bottom: none; }
+.mode-check { color: #2196F3; font-weight: 600; }
+
+/* Automation saved card on main page */
+.automation-saved-card {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: #fff; border-radius: 14px; margin-bottom: 10px;
+  border: 1px solid #f0f0f0; cursor: pointer;
+}
+.automation-saved-card:hover { background: #fafafa; }
+.automation-saved-left { display: flex; align-items: center; gap: 12px; }
+.automation-saved-icon {
+  width: 36px; height: 36px; border-radius: 10px; display: flex;
+  align-items: center; justify-content: center; font-size: 18px;
+}
+.automation-saved-icon.clock { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
+.automation-saved-name { font-size: 14px; font-weight: 600; color: #333; }
+.automation-saved-rules { display: flex; gap: 4px; align-items: center; margin-top: 4px; }
+.automation-rule-badge {
+  font-size: 10px; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 600;
+}
+.automation-rule-badge.badge-home { background: #4caf50; }
+.automation-rule-badge.badge-away { background: #e91e63; }
+.automation-rule-badge.badge-disarm { background: #9e9e9e; }
+.automation-rules-count { font-size: 11px; color: #999; }
+.toggle-switch-sm {
+  width: 40px; height: 22px; border-radius: 11px; background: #e0e0e0;
+  position: relative; cursor: pointer; transition: background 0.3s; border: none; flex-shrink: 0;
+}
+.toggle-switch-sm.on { background: #4caf50; }
+.toggle-switch-sm::after {
+  content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; top: 2px; left: 2px; transition: transform 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-switch-sm.on::after { transform: translateX(18px); }
+
+/* Trigger/Action cards in Add Automation */
+.automation-trigger-card {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: #f8f9fa; border-radius: 10px; margin-bottom: 6px; cursor: pointer;
+}
+.automation-trigger-card-icon { font-size: 18px; flex-shrink: 0; }
+.automation-trigger-card-info { flex: 1; }
+.automation-trigger-card-title { font-size: 13px; font-weight: 600; color: #333; }
+.automation-trigger-card-desc { font-size: 11px; color: #999; margin-top: 1px; }
+.automation-trigger-card-delete {
+  width: 22px; height: 22px; border-radius: 50%; background: #e53935; color: #fff;
+  border: none; font-size: 16px; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; line-height: 1; flex-shrink: 0;
+}
+.automation-trigger-card-delete:hover { background: #c62828; }
+
+/* Calendar icon button in automation section header */
+.automation-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px 0;
+}
+.calendar-icon-btn {
+  width: 28px; height: 28px; border-radius: 8px; border: none; background: #f0f7ff;
+  color: #2196F3; font-size: 16px; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; transition: background 0.2s;
+}
+.calendar-icon-btn:hover { background: #e0f0ff; }
+
+/* Automation detail */
+.automation-detail-section-title {
+  font-size: 13px; color: #999; font-weight: 500; margin-bottom: 4px;
+}
+.automation-detail-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 0;
+}
+.automation-trigger-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 0;
+}
+.automation-trigger-item-icon { font-size: 16px; }
+.automation-trigger-item-text { font-size: 13px; color: #333; }
+.automation-trigger-item-text small { color: #999; }
+.automation-action-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 0;
+}
+.automation-action-item-icon { font-size: 16px; }
+.automation-action-item-text { font-size: 13px; color: #333; }
+
+/* Schedule rule cards (on main page) */
+.schedule-rule-card-toggle {
+  background: #fff; border-radius: 12px; padding: 14px 16px; margin: 0 20px 10px;
+  border: 1px solid #f0f0f0; cursor: pointer; transition: all 0.2s;
+}
+.schedule-rule-card-toggle:hover { background: #fafafa; }
+.schedule-rule-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.schedule-rule-icon { font-size: 18px; }
+.schedule-rule-name { font-size: 14px; font-weight: 600; color: #333; flex: 1; }
+.schedule-rule-toggle { margin-left: auto; }
+.schedule-rule-times {
+  display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+}
+.schedule-rule-time-tag {
+  font-size: 11px; color: #fff; background: #4caf50; padding: 3px 8px;
+  border-radius: 6px; white-space: nowrap;
+}
+.schedule-rule-time-tag.away-tag { background: #e91e63; }
+.schedule-rule-time-tag.disarm-tag { background: #9e9e9e; }
+.schedule-rule-more {
+  font-size: 11px; color: #999; background: #f5f5f5; padding: 3px 8px;
+  border-radius: 6px;
+}
 .empty-state {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 60px 20px 48px;
@@ -700,16 +906,15 @@ body {
   </div>
   <div class="screen">
 
-    <!-- ===== MAIN PAGE (empty / guidance state) ===== -->
+    <!-- ===== MAIN PAGE ===== -->
     <div class="page active" id="pageMain">
       <div class="smart-header">
         <h1>&#8801; home1 <span class="home-select">&#9662;</span></h1>
         <div class="header-add-btn" onclick="toggleAddDropdown()">&#43;</div>
-      </div>
-      <!-- Add dropdown menu -->
-      <div class="add-dropdown" id="addDropdown">
-        <div class="add-dropdown-item" onclick="openAddMode(); closeAddDropdown();">Add Mode</div>
-        <div class="add-dropdown-item" onclick="navigateTo('pageAddAutomation'); closeAddDropdown();">Add Automation</div>
+        <div class="add-dropdown" id="addDropdown">
+          <div class="add-dropdown-item" onclick="openAddMode(); closeAddDropdown();">Add Mode</div>
+          <div class="add-dropdown-item" onclick="navigateTo('pageAddAutomation'); closeAddDropdown();">Add Automation</div>
+        </div>
       </div>
       <div class="tab-bar">
         <div class="tab-item active">My Scenes</div>
@@ -751,31 +956,31 @@ body {
           <!-- Populated scene cards (hidden initially) -->
           <div id="sceneCardsArea" style="display:none;">
             <div class="scene-section" style="padding-top: 0;">
-              <div class="scene-card active-scene" onclick="showSwitchModal('Home')">
-                <div class="scene-card-left">
+              <div class="scene-card active-scene" data-mode="Home">
+                <div class="scene-card-left" onclick="showSwitchModal('Home')">
                   <div class="scene-icon home">&#127968;</div>
                   <div><div class="scene-name">Home</div><div class="scene-status">Active &middot; 4 devices</div></div>
                 </div>
                 <div class="scene-card-right">
-                  <button class="scene-settings" onclick="event.stopPropagation(); navigateTo('pageEditGroup')">&#9881;&#65039;</button>
+                  <button class="scene-settings" onclick="event.stopPropagation(); editCardFromButton(this)">&#9881;&#65039;</button>
                 </div>
               </div>
-              <div class="scene-card" onclick="showSwitchModal('Away')">
-                <div class="scene-card-left">
+              <div class="scene-card" data-mode="Away">
+                <div class="scene-card-left" onclick="showSwitchModal('Away')">
                   <div class="scene-icon away">&#128274;</div>
                   <div><div class="scene-name">Away</div><div class="scene-status">5 devices</div></div>
                 </div>
                 <div class="scene-card-right">
-                  <button class="scene-settings" onclick="event.stopPropagation(); navigateTo('pageEditGroup')">&#9881;&#65039;</button>
+                  <button class="scene-settings" onclick="event.stopPropagation(); editCardFromButton(this)">&#9881;&#65039;</button>
                 </div>
               </div>
-              <div class="scene-card" onclick="showSwitchModal('Disarm')">
-                <div class="scene-card-left">
+              <div class="scene-card" data-mode="Disarm">
+                <div class="scene-card-left" onclick="showSwitchModal('Disarm')">
                   <div class="scene-icon disarm">&#128737;&#65039;</div>
                   <div><div class="scene-name">Disarm</div><div class="scene-status">5 devices</div></div>
                 </div>
                 <div class="scene-card-right">
-                  <button class="scene-settings" onclick="event.stopPropagation(); navigateTo('pageEditGroup')">&#9881;&#65039;</button>
+                  <button class="scene-settings" onclick="event.stopPropagation(); editCardFromButton(this)">&#9881;&#65039;</button>
                 </div>
               </div>
             </div>
@@ -790,6 +995,7 @@ body {
           <div class="automation-empty">
             <div class="automation-empty-icon">&#9881;&#65039;</div>
             <div class="automation-empty-title">Automatically control devices when things happen</div>
+            <button class="automation-add-btn" onclick="navigateTo('pageAddAutomation')">+ Add Automation</button>
           </div>
         </div>
 
@@ -857,6 +1063,8 @@ body {
               </div>
             </div>
             <div class="setup-ground"></div>
+            <!-- Red zone around house: outdoor armed, indoor disarmed -->
+            <div class="home-red-zone"></div>
           </div>
           <div class="setup-ill-title">Home Mode</div>
           <div class="setup-ill-desc">Protect indoor privacy and monitor outdoor safety when family is at home</div>
@@ -889,14 +1097,14 @@ body {
             <div class="scene-device">&#128682;</div>
             <div class="scene-device">&#127968;</div>
             <div class="setup-house">
-              <div class="house-roof"></div>
+              <div class="house-roof" style="border-bottom-color: #d32f2f;"></div>
               <div class="house-body">
-                <div class="house-window left"></div>
-                <div class="house-window right"></div>
-                <div class="house-door"></div>
+                <div class="house-window left" style="background: #ffcdd2; border-color: #ef9a9a;"></div>
+                <div class="house-window right" style="background: #ffcdd2; border-color: #ef9a9a;"></div>
+                <div class="house-door" style="background: #d32f2f;"></div>
               </div>
             </div>
-            <div class="setup-ground"></div>
+            <div class="setup-ground" style="background: linear-gradient(180deg, #ffcdd2 0%, #ef9a9a 100%);"></div>
           </div>
           <div class="setup-ill-title">Away Mode</div>
           <div class="setup-ill-desc">Monitor all areas with full security when everyone is away</div>
@@ -944,28 +1152,161 @@ body {
       </div>
     </div>
 
-    <!-- ===== DEVICE DETAIL PAGE ===== -->
-    <div class="page" id="pageDeviceDetail">
+    <!-- ===== DEVICE DETAIL: Home Mode ===== -->
+    <div class="page" id="pageDeviceDetailHome">
       <div class="detail-header">
-        <button class="back-btn" id="deviceDetailBack" onclick="navigateTo('pageSetupHome')">&#8592;</button>
-        <div class="detail-title" id="deviceDetailTitle">Device</div>
+        <button class="back-btn" onclick="navigateTo('pageSetupHome')">&#8592;</button>
+        <div class="detail-title" id="deviceDetailHomeTitle">Device</div>
+        <button class="save-link" onclick="saveDeviceSettingHome()">Save</button>
       </div>
       <div class="screen-inner">
         <div class="mode-setting-header">
-          <div class="device-detail-image" id="deviceDetailIcon">&#128249;</div>
-          <div class="device-detail-name" id="deviceDetailName">Front Door Camera</div>
+          <div class="device-detail-image" id="deviceDetailHomeIcon">&#128249;</div>
+          <div class="device-detail-name" id="deviceDetailHomeName">Front Door Camera</div>
         </div>
         <div class="disarm-btn-wrapper">
           <div class="disarm-mode-label">
-            <span class="disarm-mode-icon" id="devModeIcon">&#127968;</span>
-            <span class="disarm-mode-text" id="devModeText">Home</span>
+            <span class="disarm-mode-icon">&#127968;</span>
+            <span class="disarm-mode-text">Home</span>
           </div>
-          <div class="disarm-check-btn" id="devDisarmBtn" onclick="toggleDevDisarm()">
+          <div class="disarm-check-btn" onclick="toggleDevDisarm(this)">
             <div class="disarm-check-icon"></div>
             <span>Disarm</span>
           </div>
         </div>
-        <div class="settings-area" id="devSettingsArea">
+        <div class="settings-area">
+          <div class="setting-section">
+            <div class="setting-section-title">Alarm rules</div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#9200;</div><div class="setting-label">Alarm Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128694;</div><div class="setting-label">Leaving Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
+          </div>
+          <div class="setting-section">
+            <div class="setting-section-title">Set devices rules in this security mode</div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128065;</div><div class="setting-label">Privacy Mode</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div style="font-size:12px;color:#999;padding-left:38px;width:100%;">When motion is detected</div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#127909;</div><div class="setting-label">Video Recording</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128276;</div><div class="setting-label">Notification</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128226;</div><div class="setting-label">Camera Alarm</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128161;</div><div class="setting-label">Light Alarm</div></div><span class="disabled-text">Light is disabled</span></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128264;</div><div class="setting-label">HomeBase Alarm</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#129726;</div><div class="setting-label">Monitoring Center Help</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+          </div>
+          <div class="help-link">Learn how to set it up &gt;&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEVICE DETAIL: Away Mode ===== -->
+    <div class="page" id="pageDeviceDetailAway">
+      <div class="detail-header">
+        <button class="back-btn" onclick="navigateTo('pageSetupAway')">&#8592;</button>
+        <div class="detail-title" id="deviceDetailAwayTitle">Device</div>
+        <button class="save-link" onclick="saveDeviceSettingAway()">Save</button>
+      </div>
+      <div class="screen-inner">
+        <div class="mode-setting-header">
+          <div class="device-detail-image" id="deviceDetailAwayIcon">&#128249;</div>
+          <div class="device-detail-name" id="deviceDetailAwayName">Front Door Camera</div>
+        </div>
+        <div class="disarm-btn-wrapper">
+          <div class="disarm-mode-label">
+            <span class="disarm-mode-icon">&#128682;</span>
+            <span class="disarm-mode-text">Away</span>
+          </div>
+          <div class="disarm-check-btn" onclick="toggleDevDisarm(this)">
+            <div class="disarm-check-icon"></div>
+            <span>Disarm</span>
+          </div>
+        </div>
+        <div class="settings-area">
+          <div class="setting-section">
+            <div class="setting-section-title">Alarm rules</div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#9200;</div><div class="setting-label">Alarm Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128694;</div><div class="setting-label">Leaving Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
+          </div>
+          <div class="setting-section">
+            <div class="setting-section-title">Set devices rules in this security mode</div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128065;</div><div class="setting-label">Privacy Mode</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div style="font-size:12px;color:#999;padding-left:38px;width:100%;">When motion is detected</div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#127909;</div><div class="setting-label">Video Recording</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128276;</div><div class="setting-label">Notification</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128226;</div><div class="setting-label">Camera Alarm</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128161;</div><div class="setting-label">Light Alarm</div></div><span class="disabled-text">Light is disabled</span></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128264;</div><div class="setting-label">HomeBase Alarm</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#129726;</div><div class="setting-label">Monitoring Center Help</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+          </div>
+          <div class="help-link">Learn how to set it up &gt;&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEVICE DETAIL: Disarm Mode ===== -->
+    <div class="page" id="pageDeviceDetailDisarm">
+      <div class="detail-header">
+        <button class="back-btn" onclick="navigateTo('pageSetupDisarm')">&#8592;</button>
+        <div class="detail-title" id="deviceDetailDisarmTitle">Device</div>
+        <button class="save-link" onclick="saveDeviceSettingDisarm()">Save</button>
+      </div>
+      <div class="screen-inner">
+        <div class="mode-setting-header">
+          <div class="device-detail-image" id="deviceDetailDisarmIcon">&#128249;</div>
+          <div class="device-detail-name" id="deviceDetailDisarmName">Front Door Camera</div>
+        </div>
+        <div class="disarm-btn-wrapper">
+          <div class="disarm-mode-label">
+            <span class="disarm-mode-icon">&#128721;</span>
+            <span class="disarm-mode-text dimmed">Disarmed</span>
+          </div>
+          <div class="disarm-check-btn checked" onclick="toggleDevDisarm(this)">
+            <div class="disarm-check-icon"></div>
+            <span>Disarm</span>
+          </div>
+        </div>
+        <div class="settings-area disabled">
+          <div class="setting-section">
+            <div class="setting-section-title">Alarm rules</div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#9200;</div><div class="setting-label">Alarm Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128694;</div><div class="setting-label">Leaving Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
+          </div>
+          <div class="setting-section">
+            <div class="setting-section-title">Set devices rules in this security mode</div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128065;</div><div class="setting-label">Privacy Mode</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div style="font-size:12px;color:#999;padding-left:38px;width:100%;">When motion is detected</div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#127909;</div><div class="setting-label">Video Recording</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128276;</div><div class="setting-label">Notification</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128226;</div><div class="setting-label">Camera Alarm</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128161;</div><div class="setting-label">Light Alarm</div></div><span class="disabled-text">Light is disabled</span></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128264;</div><div class="setting-label">HomeBase Alarm</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#129726;</div><div class="setting-label">Monitoring Center Help</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
+          </div>
+          <div class="help-link">Learn how to set it up &gt;&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEVICE DETAIL: Custom Mode (generic) ===== -->
+    <div class="page" id="pageDeviceDetailCustom">
+      <div class="detail-header">
+        <button class="back-btn" onclick="navigateTo('pageAddMode')">&#8592;</button>
+        <div class="detail-title" id="deviceDetailCustomTitle">Device</div>
+        <button class="save-link" onclick="saveDeviceDetail()">Save</button>
+      </div>
+      <div class="screen-inner">
+        <div class="mode-setting-header">
+          <div class="device-detail-image" id="deviceDetailCustomIcon">&#128249;</div>
+          <div class="device-detail-name" id="deviceDetailCustomName">Front Door Camera</div>
+        </div>
+        <div class="disarm-btn-wrapper">
+          <div class="disarm-mode-label">
+            <span class="disarm-mode-icon" id="customModeIcon">&#128249;</span>
+            <span class="disarm-mode-text" id="customModeText">Custom</span>
+          </div>
+          <div class="disarm-check-btn" onclick="toggleDevDisarm(this)">
+            <div class="disarm-check-icon"></div>
+            <span>Disarm</span>
+          </div>
+        </div>
+        <div class="settings-area">
           <div class="setting-section">
             <div class="setting-section-title">Alarm rules</div>
             <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#9200;</div><div class="setting-label">Alarm Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
@@ -991,97 +1332,63 @@ body {
     <div class="page" id="pageAddMode">
       <div class="detail-header">
         <button class="back-btn" onclick="navigateTo('pageMain')">&#8592;</button>
-        <input class="detail-title-input" id="customModeName" type="text" value="Custom">
+        <div class="detail-title">Add Mode</div>
+        <button class="save-link" id="customModeSaveBtn" onclick="saveCustomMode()">Save</button>
       </div>
       <div class="screen-inner">
-        <div class="device-section" id="customModeDevices">
-          <!-- Filled dynamically -->
+        <div class="edit-group-section" style="padding-top:16px;">
+          <div class="edit-group-label">Name your Mode</div>
+          <input class="edit-group-input" id="customModeName" type="text" value="Custom" onclick="this.select()">
         </div>
-        <div style="padding:0 20px 20px;margin-top:20px;">
-          <button onclick="saveCustomMode()" style="display:block;width:100%;padding:14px;border-radius:12px;border:none;background:#2196F3;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Save</button>
+        <div class="device-section" id="customModeDevices" style="padding-top:8px;">
+          <!-- Filled dynamically -->
         </div>
       </div>
     </div>
 
-    <!-- ===== PAGE: Edit Group ===== -->
+    <!-- ===== PAGE: Edit Group (dynamic) ===== -->
     <div class="page" id="pageEditGroup">
       <div class="detail-header" style="background:#f5f5f2;border-bottom:none;">
         <button class="back-btn" onclick="navigateTo('pageMain')">&#8592;</button>
-        <div class="detail-title" style="text-align:center;">Edit Group</div>
-        <button class="save-link" onclick="showToast('Group saved!'); navigateTo('pageMain')">Save</button>
+        <div class="detail-title" style="text-align:center;" id="editGroupTitle">Edit Group</div>
+        <button class="save-link" onclick="saveEditGroup()">Save</button>
       </div>
       <div class="screen-inner" style="background:#f5f5f2; padding-bottom: 20px;">
         <div class="edit-group-section">
           <div class="edit-group-label">Name your Group</div>
-          <input class="edit-group-input" type="text" value="I'm Staying" onclick="this.select()">
+          <input class="edit-group-input" id="editGroupName" type="text" value="Home" onclick="this.select()">
           <div class="edit-group-desc">Select the devices and the device modes that you want to control with this group.</div>
         </div>
-        <div class="device-section">
-          <div class="device-card" onclick="navigateTo('pageDeviceSetting')">
-            <div class="device-checkbox checked" onclick="event.stopPropagation(); toggleCheck(this)"></div>
-            <div class="device-thumb">&#128249;</div>
-            <div class="device-info"><div class="device-name">Front Door</div><div class="device-mode">home mode</div></div>
-            <div class="device-arrow">&#8250;</div>
-          </div>
-          <div class="device-card">
-            <div class="device-checkbox checked" onclick="event.stopPropagation(); toggleCheck(this)"></div>
-            <div class="device-thumb">&#128247;</div>
-            <div class="device-info"><div class="device-name">Backyard</div><div class="device-mode disarmed">disarm</div></div>
-            <div class="device-arrow">&#8250;</div>
-          </div>
-          <div class="device-card">
-            <div class="device-checkbox checked" onclick="event.stopPropagation(); toggleCheck(this)"></div>
-            <div class="device-thumb">&#128663;</div>
-            <div class="device-info"><div class="device-name">Garage</div><div class="device-mode">home mode</div></div>
-            <div class="device-arrow">&#8250;</div>
-          </div>
-          <div class="device-card">
-            <div class="device-checkbox" onclick="event.stopPropagation(); toggleCheck(this)"></div>
-            <div class="device-thumb">&#129697;</div>
-            <div class="device-info"><div class="device-name">Living Room</div><div class="device-mode disarmed">not managed</div></div>
-            <div class="device-arrow">&#8250;</div>
-          </div>
-          <div class="device-card">
-            <div class="device-checkbox" onclick="event.stopPropagation(); toggleCheck(this)"></div>
-            <div class="device-thumb">&#128719;</div>
-            <div class="device-info"><div class="device-name">Bedroom</div><div class="device-mode disarmed">not managed</div></div>
-            <div class="device-arrow">&#8250;</div>
-          </div>
-          <div class="device-card">
-            <div class="device-checkbox checked" onclick="event.stopPropagation(); toggleCheck(this)"></div>
-            <div class="device-thumb">&#128682;</div>
-            <div class="device-info"><div class="device-name">Front Door Lock</div><div class="device-mode">home mode</div></div>
-            <div class="device-arrow">&#8250;</div>
-          </div>
-        </div>
+        <div class="device-section" id="editGroupDevices"></div>
         <div style="padding:0 20px 20px;">
-          <button class="delete-btn-full" onclick="showToast('Group deleted'); navigateTo('pageMain')">Delete</button>
+          <button class="delete-btn-full" onclick="deleteModeFromEdit()">Delete</button>
         </div>
       </div>
     </div>
 
-    <!-- ===== PAGE: Device Setting ===== -->
+    <!-- ===== PAGE: Device Setting (dynamic for edit flow) ===== -->
     <div class="page" id="pageDeviceSetting">
       <div class="detail-header">
         <button class="back-btn" onclick="navigateTo('pageEditGroup')">&#8592;</button>
-        <div class="detail-title">eufyCam S3 Pro</div>
+        <div class="detail-title" id="deviceSettingTitle">eufyCam S3 Pro</div>
+        <div style="width:32px;"></div>
       </div>
       <div class="screen-inner">
         <div class="mode-setting-header">
-          <div class="device-image">&#128249;</div>
-          <div class="device-subtitle">Front Door Camera</div>
+          <div class="device-image" id="deviceSettingIcon">&#128249;</div>
+          <div class="device-subtitle" id="deviceSettingSubtitle">Front Door Camera</div>
         </div>
         <div class="disarm-btn-wrapper">
           <div class="disarm-mode-label">
-            <span class="disarm-mode-icon" id="modeIcon">&#127968;</span>
-            <span class="disarm-mode-text" id="modeText">Home</span>
+            <span class="disarm-mode-icon" id="settingModeIcon">&#127968;</span>
+            <span class="disarm-mode-text" id="settingModeText">Home</span>
           </div>
-          <div class="disarm-check-btn" id="disarmBtn" onclick="toggleDisarm()">
+          <div class="disarm-check-btn" id="settingDisarmBtn" onclick="toggleSettingDisarm()">
             <div class="disarm-check-icon"></div>
             <span>Disarm</span>
           </div>
         </div>
-        <div class="settings-area" id="settingsArea">
+        <div class="settings-area" id="settingSettingsArea">
           <div class="setting-section">
             <div class="setting-section-title">Alarm rules</div>
             <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#9200;</div><div class="setting-label">Alarm Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
@@ -1103,101 +1410,269 @@ body {
       </div>
     </div>
 
-    <!-- ===== PAGE: Add Automation (Trigger Selection) ===== -->
+    <!-- ===== PAGE: Add Automation ===== -->
     <div class="page" id="pageAddAutomation">
       <div class="detail-header">
-        <button class="back-btn" onclick="navigateTo('pageMain')">&#8592;</button>
-        <div class="detail-title">Select Trigger</div>
-        <div style="width:32px;"></div>
+        <button class="back-btn" onclick="backFromAddAutomation()">&#8592;</button>
+        <div class="detail-title" id="addAutomationTitle">Add Automation</div>
+        <button class="save-link" id="automationSaveBtn" onclick="saveAutomation()">Save</button>
       </div>
       <div class="screen-inner" style="background:#f5f5f5;">
-        <div class="trigger-section" style="padding-top:12px;">
-          <div class="trigger-card" onclick="selectTrigger('schedule')">
-            <div class="trigger-icon schedule-icon">&#128339;</div>
-            <div class="trigger-card-info">
-              <div class="trigger-card-name">Schedule</div>
-              <div class="trigger-card-desc">Trigger automation at a specific time</div>
+        <!-- Automation Name -->
+        <div style="padding:16px 20px 0;">
+          <input class="edit-group-input" id="automationName" type="text" placeholder="Enter the name of automation" onclick="this.select()" style="margin-bottom:4px;">
+          <div class="automation-error" id="automationNameError" style="font-size:12px;color:#e53935;padding-left:4px;display:none;">Please enter the name of automation</div>
+        </div>
+        <!-- Triggers -->
+        <div style="padding:8px 20px;">
+          <div class="automation-card">
+            <div class="automation-card-header">
+              <span class="automation-card-title">Triggers</span>
+              <button class="automation-add-mini" onclick="navigateTo('pageAddTrigger')">&#43;</button>
             </div>
-            <div class="trigger-arrow">&#8250;</div>
+            <div id="automationTriggers" style="margin-top:8px;">
+              <div class="automation-empty-text">When any of the following happens</div>
+            </div>
           </div>
-          <div class="trigger-card" onclick="showToast('Device Trigger (coming soon)')">
-            <div class="trigger-icon device-icon">&#128249;</div>
-            <div class="trigger-card-info">
-              <div class="trigger-card-name">Device Trigger</div>
-              <div class="trigger-card-desc">Trigger automation by device state change</div>
+        </div>
+        <!-- Actions -->
+        <div style="padding:0 20px;">
+          <div class="automation-card">
+            <div class="automation-card-header">
+              <span class="automation-card-title">Actions</span>
+              <button class="automation-add-mini" onclick="navigateTo('pageAddAction')">&#43;</button>
             </div>
-            <div class="trigger-arrow">&#8250;</div>
+            <div id="automationActions" style="margin-top:8px;">
+              <div class="automation-empty-text">These actions will be triggered</div>
+            </div>
+          </div>
+        </div>
+        <!-- Effective Time -->
+        <div style="padding:0 20px 20px;">
+          <div class="automation-card">
+            <div class="automation-card-row" onclick="showToast('Effective Time (coming soon)')">
+              <span class="automation-card-title">Effective Time</span>
+              <span class="automation-card-value">Everyday<span> All day</span> &rsaquo;</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ===== PAGE: Schedule (Rule List) ===== -->
-    <div class="page" id="pageSchedule">
+    <!-- ===== PAGE: Add Trigger ===== -->
+    <div class="page" id="pageAddTrigger">
       <div class="detail-header">
-        <button class="back-btn" onclick="navigateTo('pageMain')">&#8592;</button>
-        <div class="detail-title">Schedule</div>
-      </div>
-      <div class="screen-inner" style="background:#f5f5f5;">
-        <button class="add-time-btn" onclick="openSetSchedule()">
-          <span style="font-size:16px;">&#43;</span> Add Time
-        </button>
-        <div class="schedule-rule-list" id="scheduleRuleList"></div>
-      </div>
-    </div>
-
-    <!-- ===== PAGE: Set Schedule (Time Picker + Mode) ===== -->
-    <div class="page" id="pageSetSchedule">
-      <div class="detail-header">
-        <button class="back-btn" onclick="navigateTo('pageSchedule')">&#8592;</button>
-        <div class="detail-title">Set Schedule</div>
+        <button class="back-btn" onclick="navigateTo('pageAddAutomation')">&#8592;</button>
+        <div class="detail-title">Add Trigger</div>
         <div style="width:32px;"></div>
       </div>
       <div class="screen-inner" style="background:#f5f5f5;">
+        <div style="padding:16px 20px 8px;font-size:13px;color:#999;font-weight:500;">Devices triggering</div>
+        <div style="padding:0 20px 8px;">
+          <div class="automation-card automation-trigger-row" onclick="showToast('HomeBase 1 selected')">
+            <div class="automation-trigger-left">
+              <span style="font-size:20px;">&#9632;</span>
+              <div><div class="automation-trigger-name">HomeBase 1</div><div class="automation-trigger-sub">Online</div></div>
+            </div>
+            <span class="automation-arrow">&rsaquo;</span>
+          </div>
+          <div class="automation-card automation-trigger-row" onclick="showToast('HomeBase 2 selected')">
+            <div class="automation-trigger-left">
+              <span style="font-size:20px;">&#9632;</span>
+              <div><div class="automation-trigger-name">HomeBase 2</div><div class="automation-trigger-sub">Online</div></div>
+            </div>
+            <span class="automation-arrow">&rsaquo;</span>
+          </div>
+        </div>
+        <div style="padding:16px 20px 8px;font-size:13px;color:#999;font-weight:500;">Automatic triggering</div>
+        <div style="padding:0 20px 20px;">
+          <div class="automation-card automation-trigger-row" onclick="navigateTo('pageAddSchedule')">
+            <div class="automation-trigger-left">
+              <span style="font-size:20px;">&#128197;</span>
+              <div><div class="automation-trigger-name">Schedule</div><div class="automation-trigger-sub">eg: Mon-Fri 09:00-18:00</div></div>
+            </div>
+            <span class="automation-arrow">&rsaquo;</span>
+          </div>
+          <div class="automation-card automation-trigger-row" onclick="showToast('Location (coming soon)')">
+            <div class="automation-trigger-left">
+              <span style="font-size:20px;">&#128205;</span>
+              <div>
+                <div class="automation-trigger-name">Location <span style="font-size:10px;background:#2196F3;color:#fff;padding:1px 5px;border-radius:4px;font-weight:600;">beta</span></div>
+                <div class="automation-trigger-sub">eg: Go home/Away home</div>
+              </div>
+            </div>
+            <span class="automation-arrow">&rsaquo;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: Schedule Calendar ===== -->
+    <div class="page" id="pageScheduleCalendar">
+      <div class="detail-header">
+        <button class="back-btn" onclick="navigateTo('pageMain')">&#8592;</button>
+        <div class="detail-title">Schedule</div>
+        <button class="save-link" onclick="openAddAutomationFromCalendar()">&#43;</button>
+      </div>
+      <div class="screen-inner" style="background:#f5f5f5;">
+        <div style="padding:8px 20px 0;">
+          <div style="display:flex;gap:6px;padding-bottom:8px;">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;"><span style="width:10px;height:10px;border-radius:2px;background:#9e9e9e;display:inline-block;"></span>Disarmed</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;"><span style="width:10px;height:10px;border-radius:2px;background:#4caf50;display:inline-block;"></span>Home</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;"><span style="width:10px;height:10px;border-radius:2px;background:#e91e63;display:inline-block;"></span>Away</span>
+          </div>
+          <!-- Calendar Grid -->
+          <div id="scheduleCalendarGrid" style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #f0f0f0;">
+            <div class="calendar-header-row">
+              <span class="calendar-day-label"></span>
+              <span class="calendar-day-label" style="color:#e53935;">Sun</span>
+              <span class="calendar-day-label">Mon</span>
+              <span class="calendar-day-label">Tue</span>
+              <span class="calendar-day-label">Wed</span>
+              <span class="calendar-day-label">Thu</span>
+              <span class="calendar-day-label" style="color:#e53935;">Fri</span>
+              <span class="calendar-day-label" style="color:#e53935;">Sat</span>
+            </div>
+            <div id="calendarGridBody"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: Add Schedule (Time + Repeat) ===== -->
+    <div class="page" id="pageAddSchedule">
+      <div class="detail-header">
+        <button class="back-btn" onclick="navigateTo('pageScheduleCalendar')">&#8592;</button>
+        <div class="detail-title">Add Schedule</div>
+        <div style="width:32px;"></div>
+      </div>
+      <div class="screen-inner" style="background:#f5f5f5;">
+        <!-- Activation Time -->
         <div style="padding:16px 20px 0;">
-          <div class="time-picker-section">
-            <div class="time-picker-section-title">From Time</div>
-            <div class="time-picker-wheel-row">
-              <div class="time-wheel" id="fromHourWheel"></div>
-              <span class="time-colon">:</span>
-              <div class="time-wheel" id="fromMinWheel"></div>
-              <div class="time-wheel" id="fromAmPmWheel" style="width:52px;"></div>
+          <div class="automation-card">
+            <div class="automation-card-title" style="margin-bottom:12px;">Activation Time</div>
+            <div style="display:flex;gap:16px;justify-content:center;">
+              <div style="text-align:center;">
+                <div style="font-size:11px;color:#999;margin-bottom:6px;">From</div>
+                <input type="time" id="scheduleFromTime" value="04:00" style="font-size:16px;font-weight:600;color:#2196F3;border:none;background:transparent;text-align:center;outline:none;">
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:11px;color:#999;margin-bottom:6px;">To</div>
+                <input type="time" id="scheduleToTime" value="08:00" style="font-size:16px;font-weight:600;color:#2196F3;border:none;background:transparent;text-align:center;outline:none;">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Repeat -->
+        <div style="padding:12px 20px 0;">
+          <div class="automation-card">
+            <div class="automation-card-title" style="margin-bottom:12px;">Repeat</div>
+            <div id="repeatDaysRow" style="display:flex;gap:6px;flex-wrap:wrap;">
+              <div class="repeat-day-btn active" data-day="0" onclick="toggleRepeatDay(this)">Sun</div>
+              <div class="repeat-day-btn" data-day="1" onclick="toggleRepeatDay(this)">Mon</div>
+              <div class="repeat-day-btn" data-day="2" onclick="toggleRepeatDay(this)">Tue</div>
+              <div class="repeat-day-btn" data-day="3" onclick="toggleRepeatDay(this)">Wed</div>
+              <div class="repeat-day-btn" data-day="4" onclick="toggleRepeatDay(this)">Thu</div>
+              <div class="repeat-day-btn" data-day="5" onclick="toggleRepeatDay(this)">Fri</div>
+              <div class="repeat-day-btn" data-day="6" onclick="toggleRepeatDay(this)">Sat</div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:20px;">
+          <button onclick="saveScheduleToAutomation()" style="display:block;width:100%;padding:14px;border-radius:12px;border:none;background:#01579b;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: Add Action ===== -->
+    <div class="page" id="pageAddAction">
+      <div class="detail-header">
+        <button class="back-btn" onclick="navigateTo('pageAddAutomation')">&#8592;</button>
+        <div class="detail-title">Add Action</div>
+        <div style="width:32px;"></div>
+      </div>
+      <div class="screen-inner" style="background:#f5f5f5;">
+        <div style="padding:16px 20px 8px;font-size:13px;color:#999;font-weight:500;">Mode</div>
+        <div style="padding:0 20px 20px;">
+          <div class="automation-card automation-trigger-row" onclick="navigateTo('pageSelectMode')">
+            <div class="automation-trigger-left">
+              <span style="font-size:20px;">&#128337;</span>
+              <div><div class="automation-trigger-name">Mode switch</div></div>
+            </div>
+            <span class="automation-arrow">&rsaquo;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: Select Mode ===== -->
+    <div class="page" id="pageSelectMode">
+      <div class="detail-header">
+        <button class="back-btn" onclick="navigateTo('pageAddAction')">&#8592;</button>
+        <div class="detail-title">Mode</div>
+        <button class="save-link" onclick="saveModeAction()">Save</button>
+      </div>
+      <div class="screen-inner" style="background:#f5f5f5;">
+        <div class="mode-list-card" id="modeListCard">
+          <div class="mode-list-item" data-mode="Home" onclick="selectActionMode(this)">
+            <span>Home</span>
+            <span class="mode-check" id="modeCheckHome" style="display:none;">&#10003;</span>
+          </div>
+          <div class="mode-list-item" data-mode="Away" onclick="selectActionMode(this)">
+            <span>Away</span>
+            <span class="mode-check" id="modeCheckAway" style="display:none;">&#10003;</span>
+          </div>
+          <div class="mode-list-item" data-mode="Disarm" onclick="selectActionMode(this)">
+            <span>Disarm</span>
+            <span class="mode-check" id="modeCheckDisarm" style="display:none;">&#10003;</span>
+          </div>
+        </div>
+        <div style="padding:0 20px;">
+          <div class="automation-card automation-trigger-row" onclick="showToast('Add Mode (coming soon)')">
+            <div class="automation-trigger-left">
+              <span style="font-size:20px;color:#2196F3;">&#43;</span>
+              <div><div class="automation-trigger-name" style="color:#2196F3;">Add Mode</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ===== PAGE: Automation Detail ===== -->
+    <div class="page" id="pageAutomationDetail">
+      <div class="detail-header">
+        <button class="back-btn" onclick="navigateTo('pageMain')">&#8592;</button>
+        <div class="detail-title">Automation Detail</div>
+        <div style="width:32px;"></div>
+      </div>
+      <div class="screen-inner" style="background:#f5f5f5;">
+        <div style="padding:16px 20px;">
+          <div class="automation-card">
+            <div class="automation-detail-row">
+              <span style="font-size:14px;font-weight:600;">Name</span>
+              <span id="detailAutoName" style="color:#999;">Switch Mode by Schedule</span>
             </div>
           </div>
         </div>
         <div style="padding:0 20px;">
-          <div class="time-picker-section">
-            <div class="time-picker-section-title">To Time</div>
-            <div class="time-picker-wheel-row">
-              <div class="time-wheel" id="toHourWheel"></div>
-              <span class="time-colon">:</span>
-              <div class="time-wheel" id="toMinWheel"></div>
-              <div class="time-wheel" id="toAmPmWheel" style="width:52px;"></div>
-            </div>
+          <div class="automation-card">
+            <div class="automation-detail-section-title">Triggers</div>
+            <div id="detailTriggers" style="padding-top:8px;"></div>
+          </div>
+        </div>
+        <div style="padding:0 20px;">
+          <div class="automation-card">
+            <div class="automation-detail-section-title">Actions</div>
+            <div id="detailActions" style="padding-top:8px;"></div>
           </div>
         </div>
         <div style="padding:0 20px 20px;">
-          <div class="mode-selector-section">
-            <div class="mode-selector-section-title">Set Mode</div>
-            <div class="mode-selector-option selected" data-mode="Home" onclick="selectSetScheduleMode(this)">
-              <div class="mode-selector-option-icon icon-home">&#127968;</div>
-              <div class="mode-selector-option-name">Home</div>
-              <div class="mode-selector-check"></div>
-            </div>
-            <div class="mode-selector-option" data-mode="Away" onclick="selectSetScheduleMode(this)">
-              <div class="mode-selector-option-icon icon-away">&#128682;</div>
-              <div class="mode-selector-option-name">Away</div>
-              <div class="mode-selector-check"></div>
-            </div>
-            <div class="mode-selector-option" data-mode="Disarm" onclick="selectSetScheduleMode(this)">
-              <div class="mode-selector-option-icon icon-disarm">&#128721;</div>
-              <div class="mode-selector-option-name">Disarmed</div>
-              <div class="mode-selector-check"></div>
+          <div class="automation-card">
+            <div class="automation-detail-section-title">Effective Time</div>
+            <div style="display:flex;justify-content:space-between;padding-top:8px;">
+              <span style="color:#999;">Everyday</span>
+              <span style="color:#2196F3;">All day &rsaquo;</span>
             </div>
           </div>
-        </div>
-        <div style="padding:0 20px 20px;">
-          <button onclick="saveScheduleSlot()" style="display:block;width:100%;padding:14px;border-radius:12px;border:none;background:#2196F3;color:#fff;font-size:15px;font-weight:600;cursor:pointer;">Save</button>
         </div>
       </div>
     </div>
@@ -1247,9 +1722,9 @@ body {
 // ========== Guided Setup ==========
 const MODES = ['Home', 'Away', 'Disarm'];
 const MODE_CONFIG = {
-  Home: { icon: '&#127968;', desc: 'Family is at home, only monitor outdoor areas', modeLabel: 'Home', pageId: 'pageSetupHome', containerId: 'homeDevices' },
-  Away: { icon: '&#128682;', desc: 'Everyone has left, monitor all areas with full security', modeLabel: 'Away', pageId: 'pageSetupAway', containerId: 'awayDevices' },
-  Disarm: { icon: '&#128721;', desc: 'Family is at home, no monitoring on any areas', modeLabel: 'Disarmed', pageId: 'pageSetupDisarm', containerId: 'disarmDevices' }
+  Home: { icon: '&#127968;', desc: 'Protect indoor privacy and monitor outdoor safety', modeLabel: 'Home', pageId: 'pageSetupHome', containerId: 'homeDevices' },
+  Away: { icon: '&#128682;', desc: 'Monitor all areas with full security', modeLabel: 'Away', pageId: 'pageSetupAway', containerId: 'awayDevices' },
+  Disarm: { icon: '&#128721;', desc: 'Turn off all monitoring and recording', modeLabel: 'Disarmed', pageId: 'pageSetupDisarm', containerId: 'disarmDevices' }
 };
 const DEVICES = [
   { icon: '&#128249;', name: 'Front Door Camera', mode: 'Home' },
@@ -1262,8 +1737,6 @@ const DEVICES = [
 let currentStep = 0;
 let skippedModes = [];
 let enabledModes = [];
-let currentDeviceDisarmed = false;
-let currentDeviceDetailPage = null;
 let setupCompleted = false;
 
 function startGuidedSetup() {
@@ -1279,6 +1752,15 @@ function populateDevices(mode) {
   const container = document.getElementById(cfg.containerId);
   container.innerHTML = '';
   DEVICES.forEach(d => {
+    const isIndoor = d.name === 'Living Room' || d.name === 'Bedroom';
+    let modeLabel;
+    if (mode === 'Home' && isIndoor) {
+      modeLabel = 'privacy mode';
+    } else if (mode === 'Disarm') {
+      modeLabel = 'disarm mode';
+    } else {
+      modeLabel = cfg.modeLabel.toLowerCase() + ' mode';
+    }
     const card = document.createElement('div');
     card.className = 'device-card';
     card.onclick = () => openDeviceDetail(d, mode);
@@ -1287,7 +1769,7 @@ function populateDevices(mode) {
       '<div class="device-thumb">' + d.icon + '</div>' +
       '<div class="device-info">' +
         '<div class="device-name">' + d.name + '</div>' +
-        '<div class="device-mode">' + cfg.modeLabel + ' mode</div>' +
+        '<div class="device-mode">' + modeLabel + '</div>' +
       '</div>' +
       '<div class="device-arrow">&#8250;</div>';
     container.appendChild(card);
@@ -1342,29 +1824,47 @@ function goBackToMain() {
 }
 
 function openDeviceDetail(device, mode) {
-  currentDeviceDetailPage = mode;
-  document.getElementById('deviceDetailTitle').textContent = device.name;
-  document.getElementById('deviceDetailIcon').innerHTML = device.icon;
-  document.getElementById('deviceDetailName').textContent = device.name;
-  document.getElementById('devModeText').textContent = MODE_CONFIG[mode].modeLabel;
-  currentDeviceDisarmed = false;
-  document.getElementById('devDisarmBtn').classList.remove('checked');
-  document.getElementById('devSettingsArea').classList.remove('disabled');
-  document.getElementById('deviceDetailBack').onclick = () => {
-    navigateTo(MODE_CONFIG[mode].pageId);
+  const pageMap = {
+    'Home': 'pageDeviceDetailHome',
+    'Away': 'pageDeviceDetailAway',
+    'Disarm': 'pageDeviceDetailDisarm'
   };
-  navigateTo('pageDeviceDetail');
+  const pageId = pageMap[mode];
+  document.getElementById('deviceDetail' + mode + 'Title').textContent = device.name;
+  document.getElementById('deviceDetail' + mode + 'Icon').innerHTML = device.icon;
+  document.getElementById('deviceDetail' + mode + 'Name').textContent = device.name;
+
+  // Store device and mode for save
+  window._currentDevice = device;
+  window._currentMode = mode;
+
+  navigateTo(pageId);
 }
 
-function toggleDevDisarm() {
-  currentDeviceDisarmed = !currentDeviceDisarmed;
-  const btn = document.getElementById('devDisarmBtn');
-  const settings = document.getElementById('devSettingsArea');
-  const modeText = document.getElementById('devModeText');
+// Save handlers for mode-specific device detail pages
+function saveDeviceSettingHome() {
+  showToast('Settings saved!');
+  navigateTo('pageSetupHome');
+}
+function saveDeviceSettingAway() {
+  showToast('Settings saved!');
+  navigateTo('pageSetupAway');
+}
+function saveDeviceSettingDisarm() {
+  showToast('Settings saved!');
+  navigateTo('pageSetupDisarm');
+}
+
+// Generic toggle for disarm check buttons across all pages
+function toggleDevDisarm(btn) {
+  const wrapper = btn.closest('.disarm-btn-wrapper');
+  const settings = btn.closest('.page').querySelector('.settings-area');
+  const modeText = wrapper.querySelector('.disarm-mode-text');
   btn.classList.toggle('checked');
-  if (currentDeviceDisarmed) {
+  if (btn.classList.contains('checked')) {
     settings.classList.add('disabled');
     modeText.classList.add('dimmed');
+    modeText.textContent = 'Disarmed';
   } else {
     settings.classList.remove('disabled');
     modeText.classList.remove('dimmed');
@@ -1386,6 +1886,7 @@ function navigateTo(pageId) {
   page.classList.add('page-enter');
   if (pageId === 'pageSchedule') renderScheduleRules();
   if (pageId === 'pageSetSchedule') initTimePickers();
+  if (pageId === 'pageMain') renderAutomationCards();
 }
 
 // ========== Switch Mode Modal ==========
@@ -1404,11 +1905,12 @@ function showSwitchModal(sceneName) {
     if (el) el.textContent = mode;
   }
   document.querySelectorAll('#pageMain .scene-card').forEach(c => c.classList.remove('active-scene'));
-  event.currentTarget.classList.add('active-scene');
+  const card = event.currentTarget.closest('.scene-card');
+  if (card) card.classList.add('active-scene');
   document.querySelectorAll('#pageMain .scene-status').forEach(s => {
     s.textContent = s.textContent.replace('Active &middot; ', '');
   });
-  const clickedStatus = event.currentTarget.querySelector('.scene-status');
+  const clickedStatus = card ? card.querySelector('.scene-status') : null;
   if (clickedStatus && !clickedStatus.innerHTML.includes('Active')) {
     clickedStatus.innerHTML = 'Active &middot; ' + clickedStatus.innerHTML;
   }
@@ -1534,49 +2036,464 @@ function renderScheduleRules() {
   });
 }
 
+// ========== Automation Flow ==========
+let automationTriggers = [];
+let automationActions = [];
+let pendingSelectedMode = null;
+let savedAutomations = [];
+
+function saveAutomation() {
+  const name = document.getElementById('automationName').value.trim();
+  if (!name) {
+    document.getElementById('automationNameError').style.display = 'block';
+    return;
+  }
+  document.getElementById('automationNameError').style.display = 'none';
+
+  const automation = {
+    name,
+    triggers: [...automationTriggers],
+    actions: [...automationActions],
+    enabled: true
+  };
+
+  if (editingAutomationIdx >= 0) {
+    // Update existing automation
+    savedAutomations[editingAutomationIdx] = automation;
+    editingAutomationIdx = -1;
+  } else {
+    // Create new
+    savedAutomations.push(automation);
+  }
+
+  automationTriggers = [];
+  automationActions = [];
+  document.getElementById('automationName').value = '';
+  document.getElementById('addAutomationTitle').textContent = 'Add Automation';
+
+  renderAutomationCards();
+
+  if (calendarFlowActive) {
+    calendarFlowActive = false;
+    editingAutomationIdx = -1;
+    showToast('Automation saved!');
+    navigateTo('pageMain');
+  } else {
+    showToast('Automation saved!');
+    navigateTo('pageMain');
+  }
+}
+
+function renderAutomationCards() {
+  const area = document.getElementById('automationArea');
+  const hasModes = setupCompleted;
+
+  if (savedAutomations.length === 0) {
+    let html = '<div class="automation-section-header">' +
+      '<div class="section-title">Automation</div>';
+    if (hasModes) {
+      html += '<button class="calendar-icon-btn" onclick="openScheduleCalendar()">&#128197;</button>';
+    }
+    html += '</div>' +
+      '<div class="automation-empty">' +
+        '<div class="automation-empty-icon">&#9889;&#65039;</div>' +
+        '<div class="automation-empty-title">Automatically control devices when things happen</div>' +
+        '<button class="automation-add-btn" onclick="navigateTo(\'pageAddAutomation\')">+ Add Automation</button>' +
+      '</div>';
+    area.innerHTML = html;
+    return;
+  }
+
+  let html = '<div class="automation-section-header">' +
+    '<div class="section-title">Automation</div>' +
+    '<button class="calendar-icon-btn" onclick="openScheduleCalendar()">&#128197;</button>' +
+  '</div>';
+  savedAutomations.forEach((a, idx) => {
+    const ruleBadges = a.actions.map(act => {
+      const badgeClass = act.mode === 'Home' ? 'badge-home' : act.mode === 'Away' ? 'badge-away' : 'badge-disarm';
+      return '<span class="automation-rule-badge ' + badgeClass + '">' + act.mode + '</span>';
+    }).join('');
+
+    html +=
+      '<div class="automation-saved-card" onclick="openAutomationDetail(' + idx + ')">' +
+        '<div class="automation-saved-left">' +
+          '<div class="automation-saved-icon clock">&#128337;</div>' +
+          '<div>' +
+            '<div class="automation-saved-name">' + a.name + '</div>' +
+            '<div class="automation-saved-rules">' + ruleBadges +
+              '<span class="automation-rules-count">' + a.triggers.length + ' rule' + (a.triggers.length !== 1 ? 's' : '') + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="toggle-switch-sm ' + (a.enabled ? 'on' : '') + '" onclick="event.stopPropagation(); toggleAutomation(' + idx + ', this)"></button>' +
+      '</div>';
+  });
+  area.innerHTML = html;
+}
+
+function toggleAutomation(idx, btn) {
+  savedAutomations[idx].enabled = !savedAutomations[idx].enabled;
+  btn.classList.toggle('on');
+}
+
+function openAutomationDetail(idx) {
+  const a = savedAutomations[idx];
+  document.getElementById('detailAutoName').textContent = a.name;
+
+  // Render triggers
+  const trigContainer = document.getElementById('detailTriggers');
+  if (a.triggers.length === 0) {
+    trigContainer.innerHTML = '<div class="automation-empty-text">No triggers set</div>';
+  } else {
+    let trigHtml = '';
+    a.triggers.forEach(t => {
+      if (t.type === 'schedule') {
+        trigHtml +=
+          '<div class="automation-trigger-item">' +
+            '<span class="automation-trigger-item-icon">&#128197;</span>' +
+            '<span class="automation-trigger-item-text">' + t.label + '</span>' +
+          '</div>';
+      } else {
+        trigHtml +=
+          '<div class="automation-trigger-item">' +
+            '<span class="automation-trigger-item-icon">&#9632;</span>' +
+            '<span class="automation-trigger-item-text">' + t.label + '</span>' +
+          '</div>';
+      }
+    });
+    trigContainer.innerHTML = trigHtml;
+  }
+
+  // Render actions
+  const actContainer = document.getElementById('detailActions');
+  if (a.actions.length === 0) {
+    actContainer.innerHTML = '<div class="automation-empty-text">No actions set</div>';
+  } else {
+    let actHtml = '';
+    a.actions.forEach(act => {
+      actHtml +=
+        '<div class="automation-action-item">' +
+          '<span class="automation-action-item-icon">&#128337;</span>' +
+          '<span class="automation-action-item-text">Switch to ' + act.mode + ' mode</span>' +
+        '</div>';
+    });
+    actContainer.innerHTML = actHtml;
+  }
+
+  navigateTo('pageAutomationDetail');
+}
+
+// Trigger flow
+let calendarFlowActive = false; // true when navigating from calendar
+let editingAutomationIdx = -1; // -1 = new, >= 0 = editing existing
+
+function openScheduleCalendar() {
+  renderCalendarGrid();
+  calendarFlowActive = false;
+  editingAutomationIdx = -1;
+  navigateTo('pageScheduleCalendar');
+}
+
+function openAddAutomationFromCalendar() {
+  // Reset form for new automation
+  document.getElementById('automationName').value = '';
+  document.getElementById('automationNameError').style.display = 'none';
+  document.getElementById('addAutomationTitle').textContent = 'Add Automation';
+  automationTriggers = [];
+  automationActions = [];
+  renderAutomationTriggersPreview();
+  renderAutomationActionsPreview();
+  calendarFlowActive = true;
+  editingAutomationIdx = -1;
+  navigateTo('pageAddAutomation');
+}
+
+function openEditAutomationFromCalendar(idx) {
+  const a = savedAutomations[idx];
+  calendarFlowActive = true;
+  editingAutomationIdx = idx;
+
+  // Pre-populate the form
+  document.getElementById('automationName').value = a.name;
+  document.getElementById('automationNameError').style.display = 'none';
+  automationTriggers = JSON.parse(JSON.stringify(a.triggers));
+  automationActions = JSON.parse(JSON.stringify(a.actions));
+  renderAutomationTriggersPreview();
+  renderAutomationActionsPreview();
+
+  // Update title
+  document.getElementById('addAutomationTitle').textContent = 'Edit Automation';
+
+  navigateTo('pageAddAutomation');
+}
+
+function backFromAddAutomation() {
+  if (calendarFlowActive) {
+    // Go back to calendar overview
+    calendarFlowActive = false;
+    editingAutomationIdx = -1;
+    automationTriggers = [];
+    automationActions = [];
+    document.getElementById('automationName').value = '';
+    document.getElementById('addAutomationTitle').textContent = 'Add Automation';
+    renderAutomationTriggersPreview();
+    renderAutomationActionsPreview();
+    renderCalendarGrid();
+    navigateTo('pageScheduleCalendar');
+  } else {
+    // Go back to main page
+    navigateTo('pageMain');
+  }
+}
+
+function renderCalendarGrid() {
+  const body = document.getElementById('calendarGridBody');
+  if (!body) return;
+  body.innerHTML = '';
+
+  // Build 24 rows (each hour) with time labels on the left
+  for (let hour = 0; hour < 24; hour++) {
+    // Time label cell
+    const timeCell = document.createElement('div');
+    timeCell.className = 'calendar-time-cell';
+    timeCell.style.borderRight = 'none';
+    if (hour === 0) {
+      timeCell.style.fontSize = '9px';
+      timeCell.style.color = '#bbb';
+      timeCell.style.textAlign = 'right';
+      timeCell.style.paddingRight = '4px';
+      timeCell.style.paddingTop = '2px';
+      timeCell.textContent = '00:00';
+    } else if (hour % 4 === 0) {
+      timeCell.style.fontSize = '9px';
+      timeCell.style.color = '#bbb';
+      timeCell.style.textAlign = 'right';
+      timeCell.style.paddingRight = '4px';
+      timeCell.style.paddingTop = '2px';
+      timeCell.textContent = (hour < 10 ? '0' : '') + hour + ':00';
+    }
+    body.appendChild(timeCell);
+
+    // 7 day cells for this hour
+    for (let day = 0; day < 7; day++) {
+      const cell = document.createElement('div');
+      cell.className = 'calendar-day-cell';
+      cell.dataset.day = day;
+      cell.dataset.hour = hour;
+      cell.id = 'cal-cell-' + day + '-' + hour;
+      body.appendChild(cell);
+    }
+  }
+
+  // Place schedule blocks from saved automations
+  savedAutomations.forEach((auto, autoIdx) => {
+    auto.triggers.filter(t => t.type === 'schedule').forEach(t => {
+      const mode = t.mode || 'Home';
+      const dayMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+
+      // Parse time range
+      const fromParts = t.fromTime ? t.fromTime.split(':') : ['08', '00'];
+      const toParts = t.toTime ? t.toTime.split(':') : ['18', '00'];
+      const fromHour = parseInt(fromParts[0]);
+      const fromMin = parseInt(fromParts[1]);
+      const toHour = parseInt(toParts[0]);
+      const toMin = parseInt(toParts[1]);
+
+      // Determine days
+      let days = [];
+      if (t.days && t.days.length > 0) {
+        t.days.forEach(d => { if (dayMap[d] !== undefined) days.push(dayMap[d]); });
+      } else {
+        days = [0, 1, 2, 3, 4, 5, 6]; // All days
+      }
+
+      days.forEach(day => {
+        const cellId = 'cal-cell-' + day + '-' + fromHour;
+        const cell = document.getElementById(cellId);
+        if (cell) {
+          const block = document.createElement('div');
+          const blockClass = mode === 'Home' ? 'block-home' : mode === 'Away' ? 'block-away' : 'block-disarm';
+          block.className = 'calendar-time-block ' + blockClass;
+
+          // Calculate position and height based on minutes
+          const topPct = (fromMin / 60) * 100;
+          const durationMin = (toHour - fromHour) * 60 + (toMin - fromMin);
+          const heightPct = (durationMin / 60) * 100;
+
+          block.style.top = topPct + '%';
+          block.style.height = Math.max(heightPct, 12) + 'px';
+          block.style.minHeight = '12px';
+
+          block.onclick = (e) => {
+            e.stopPropagation();
+            openEditAutomationFromCalendar(autoIdx);
+          };
+          cell.appendChild(block);
+        }
+      });
+    });
+  });
+}
+
+// Schedule save flow
+function toggleRepeatDay(el) {
+  el.classList.toggle('active');
+}
+
+function saveScheduleToAutomation() {
+  const fromTime = document.getElementById('scheduleFromTime').value;
+  const toTime = document.getElementById('scheduleToTime').value;
+  const activeDays = document.querySelectorAll('#repeatDaysRow .repeat-day-btn.active');
+  const dayLabels = Array.from(activeDays).map(b => b.textContent);
+  const mode = pendingSelectedMode || 'Home';
+
+  let label;
+  if (dayLabels.length === 7) {
+    label = fromTime + '-' + toTime + ' Auto Switch to ' + mode;
+  } else if (dayLabels.length === 0) {
+    label = fromTime + '-' + toTime + ' Auto Switch to ' + mode;
+  } else {
+    label = dayLabels.join('-') + ' ' + fromTime + '-' + toTime + ' Auto Switch to ' + mode;
+  }
+
+  automationTriggers.push({ type: 'schedule', label, mode, fromTime, toTime, days: dayLabels });
+
+  // Update trigger display on add automation page
+  renderAutomationTriggersPreview();
+
+  // Reset repeat buttons
+  document.querySelectorAll('#repeatDaysRow .repeat-day-btn').forEach(b => b.classList.remove('active'));
+  pendingSelectedMode = null;
+
+  showToast('Schedule added!');
+  navigateTo('pageAddAutomation');
+}
+
+function renderAutomationTriggersPreview() {
+  const container = document.getElementById('automationTriggers');
+  if (automationTriggers.length === 0) {
+    container.innerHTML = '<div class="automation-empty-text">When any of the following happens</div>';
+    return;
+  }
+  let html = '';
+  automationTriggers.forEach((t, i) => {
+    if (t.type === 'schedule') {
+      html +=
+        '<div class="automation-trigger-card">' +
+          '<span class="automation-trigger-card-icon">&#128197;</span>' +
+          '<div class="automation-trigger-card-info">' +
+            '<div class="automation-trigger-card-title">Schedule</div>' +
+            '<div class="automation-trigger-card-desc">' + t.label + '</div>' +
+          '</div>' +
+          '<button class="automation-trigger-card-delete" onclick="event.stopPropagation(); deleteTrigger(' + i + ')">&#8722;</button>' +
+        '</div>';
+    } else {
+      html +=
+        '<div class="automation-trigger-card">' +
+          '<span class="automation-trigger-card-icon">&#9632;</span>' +
+          '<div class="automation-trigger-card-info">' +
+            '<div class="automation-trigger-card-title">' + t.label + '</div>' +
+          '</div>' +
+          '<button class="automation-trigger-card-delete" onclick="event.stopPropagation(); deleteTrigger(' + i + ')">&#8722;</button>' +
+        '</div>';
+    }
+  });
+  container.innerHTML = html;
+}
+
+function deleteTrigger(idx) {
+  automationTriggers.splice(idx, 1);
+  renderAutomationTriggersPreview();
+}
+
+function renderAutomationActionsPreview() {
+  const container = document.getElementById('automationActions');
+  if (automationActions.length === 0) {
+    container.innerHTML = '<div class="automation-empty-text">These actions will be triggered</div>';
+    return;
+  }
+  let html = '';
+  automationActions.forEach((a, i) => {
+    html +=
+      '<div class="automation-trigger-card">' +
+        '<span class="automation-trigger-card-icon">&#128337;</span>' +
+        '<div class="automation-trigger-card-info">' +
+          '<div class="automation-trigger-card-title">Mode</div>' +
+          '<div class="automation-trigger-card-desc">Switch to ' + a.mode + '</div>' +
+        '</div>' +
+        '<button class="automation-trigger-card-delete" onclick="event.stopPropagation(); deleteAction(' + i + ')">&#8722;</button>' +
+      '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function deleteAction(idx) {
+  automationActions.splice(idx, 1);
+  renderAutomationActionsPreview();
+}
+
+// Action flow
+function selectActionMode(el) {
+  document.querySelectorAll('#modeListCard .mode-list-item').forEach(item => {
+    item.classList.remove('selected');
+    item.querySelector('.mode-check').style.display = 'none';
+  });
+  el.classList.add('selected');
+  const mode = el.dataset.mode;
+  el.querySelector('.mode-check').style.display = 'inline';
+  pendingSelectedMode = mode;
+}
+
+function saveModeAction() {
+  const mode = pendingSelectedMode;
+  if (!mode) {
+    showToast('Please select a mode');
+    return;
+  }
+  automationActions.push({ type: 'mode', mode });
+  renderAutomationActionsPreview();
+  pendingSelectedMode = null;
+  // Reset selection UI
+  document.querySelectorAll('#modeListCard .mode-list-item').forEach(item => {
+    item.classList.remove('selected');
+    item.querySelector('.mode-check').style.display = 'none';
+  });
+  showToast('Action added!');
+  navigateTo('pageAddAutomation');
+}
+
 // ========== Toggles ==========
 function toggleCheck(el) {
   el.classList.toggle('checked');
   const modeText = el.closest('.device-card').querySelector('.device-mode');
   if (!el.classList.contains('checked')) {
-    modeText.textContent = 'not managed';
+    modeText.textContent = 'custom mode';
     modeText.classList.add('disarmed');
   } else {
-    modeText.textContent = 'home mode';
+    // Determine the mode label based on which page we're on
+    const currentActivePage = document.querySelector('.page.active');
+    if (currentActivePage && currentActivePage.id === 'pageAddMode') {
+      const nameInput = document.getElementById('customModeName');
+      const modeName = nameInput.value || 'Custom';
+      modeText.textContent = modeName.toLowerCase() + ' mode';
+    } else if (currentActivePage && currentActivePage.id === 'pageEditGroup') {
+      modeText.textContent = 'away mode';
+    } else {
+      // Setup pages (Home/Away/Disarm)
+      const modeLabel = currentActivePage ? getModeLabelFromPage(currentActivePage.id) : 'Home';
+      modeText.textContent = modeLabel.toLowerCase() + ' mode';
+    }
     modeText.classList.remove('disarmed');
   }
 }
-function toggleSettingCheck(el) { el.classList.toggle('checked'); }
 
-function toggleDisarm() {
-  const btn = document.getElementById('disarmBtn');
-  const settings = document.getElementById('settingsArea');
-  const modeText = document.getElementById('modeText');
-  const modeIcon = document.getElementById('modeIcon');
-  const isDisarmed = btn.classList.contains('checked');
-  if (isDisarmed) {
-    btn.classList.remove('checked');
-    settings.classList.remove('disabled');
-    modeText.textContent = 'Home';
-    modeText.classList.remove('dimmed');
-    modeIcon.textContent = '\uD83C\uDFE0';
-    settings.querySelectorAll('.checkbox-setting').forEach(cb => {
-      if (cb.dataset.wasChecked === 'true') cb.classList.add('checked');
-    });
-    showToast('Disarm unchecked');
-  } else {
-    btn.classList.add('checked');
-    modeText.textContent = 'Disarmed';
-    modeText.classList.add('dimmed');
-    modeIcon.textContent = '\uD83D\uDD15';
-    settings.querySelectorAll('.checkbox-setting').forEach(cb => {
-      cb.dataset.wasChecked = cb.classList.contains('checked') ? 'true' : 'false';
-      cb.classList.remove('checked');
-    });
-    settings.classList.add('disabled');
-    showToast('Disarm checked');
-  }
+function getModeLabelFromPage(pageId) {
+  if (pageId === 'pageSetupHome') return 'Home';
+  if (pageId === 'pageSetupAway') return 'Away';
+  if (pageId === 'pageSetupDisarm') return 'Disarm';
+  return 'Home';
 }
+function toggleSettingCheck(el) { el.classList.toggle('checked'); }
 
 // ========== Toast ==========
 function showToast(message) {
@@ -1612,20 +2529,21 @@ function populateCustomModeDevices() {
   DEVICES.forEach(d => {
     const card = document.createElement('div');
     card.className = 'device-card';
-    card.onclick = (e) => {
+    card.onclick = () => {
       const cb = card.querySelector('.device-checkbox');
       if (!cb.classList.contains('checked')) {
-        // First check: toggle checkbox
         cb.classList.add('checked');
         const modeLabel = card.querySelector('.device-mode');
-        modeLabel.textContent = 'Custom mode';
+        const nameInput = document.getElementById('customModeName');
+        const modeName = nameInput.value || 'Custom';
+        modeLabel.textContent = modeName.toLowerCase() + ' mode';
         modeLabel.classList.remove('disarmed');
       }
-      // Open device detail for configuration
+      // Always open device detail after checking or re-editing
       openCustomDeviceDetail(d);
     };
     card.innerHTML =
-      '<div class="device-checkbox" onclick="event.stopPropagation(); toggleCheck(this)"></div>' +
+      '<div class="device-checkbox" onclick="event.stopPropagation();"></div>' +
       '<div class="device-thumb">' + d.icon + '</div>' +
       '<div class="device-info">' +
         '<div class="device-name">' + d.name + '</div>' +
@@ -1637,21 +2555,26 @@ function populateCustomModeDevices() {
 }
 
 function openCustomDeviceDetail(device) {
-  document.getElementById('deviceDetailTitle').textContent = device.name;
-  document.getElementById('deviceDetailIcon').innerHTML = device.icon;
-  document.getElementById('deviceDetailName').textContent = device.name;
-  document.getElementById('devModeText').textContent = 'Custom';
-  currentDeviceDisarmed = false;
-  document.getElementById('devDisarmBtn').classList.remove('checked');
-  document.getElementById('devSettingsArea').classList.remove('disabled');
-  document.getElementById('deviceDetailBack').onclick = () => {
-    navigateTo('pageAddMode');
-  };
-  navigateTo('pageDeviceDetail');
+  document.getElementById('deviceDetailCustomTitle').textContent = device.name;
+  document.getElementById('deviceDetailCustomIcon').innerHTML = device.icon;
+  document.getElementById('deviceDetailCustomName').textContent = device.name;
+  const nameInput = document.getElementById('customModeName');
+  const modeName = nameInput.value || 'Custom';
+  document.getElementById('customModeText').textContent = modeName;
+  document.getElementById('customModeIcon').innerHTML = device.icon;
+  // Reset disarm state
+  const page = document.getElementById('pageDeviceDetailCustom');
+  page.querySelector('.disarm-check-btn').classList.remove('checked');
+  page.querySelector('.settings-area').classList.remove('disabled');
+  page.querySelector('.disarm-mode-text').classList.remove('dimmed');
+  navigateTo('pageDeviceDetailCustom');
+}
+
+function saveDeviceDetail() {
+  navigateTo('pageAddMode');
 }
 
 function saveCustomMode() {
-  // Add the new custom scene card
   const modeName = document.getElementById('customModeName').value || 'Custom';
   const checkedCards = document.querySelectorAll('#customModeDevices .device-checkbox.checked');
   const deviceCount = checkedCards.length;
@@ -1665,14 +2588,15 @@ function saveCustomMode() {
   const card = document.createElement('div');
   card.className = 'scene-card';
   card.setAttribute('data-custom', 'true');
+  card.setAttribute('data-mode', modeName);
   card.onclick = () => showSwitchModal(modeName);
   card.innerHTML =
-    '<div class="scene-card-left">' +
+    '<div class="scene-card-left" onclick="showSwitchModal(\'' + modeName + '\')">' +
       '<div class="scene-icon custom">&#127947;</div>' +
       '<div><div class="scene-name">' + modeName + '</div><div class="scene-status">' + deviceCount + ' devices</div></div>' +
     '</div>' +
     '<div class="scene-card-right">' +
-      '<button class="scene-settings" onclick="event.stopPropagation(); navigateTo(\'pageEditGroup\')">&#9881;&#65039;</button>' +
+      '<button class="scene-settings" onclick="event.stopPropagation(); editCardFromButton(this)">&#9881;&#65039;</button>' +
     '</div>';
   sceneSection.appendChild(card);
 
@@ -1692,6 +2616,129 @@ document.addEventListener('click', function(e) {
     closeAddDropdown();
   }
 });
+
+// ========== Edit Group (dynamic) ==========
+let editingMode = null;
+
+function editCardFromButton(btn) {
+  const card = btn.closest('.scene-card');
+  const mode = card.getAttribute('data-mode');
+  openEditGroup(mode);
+}
+
+function openEditGroup(mode) {
+  editingMode = mode;
+  const modeMap = {
+    'Home': { name: 'Home', modeLabel: 'home mode', icon: '&#127968;', disarmDefault: false },
+    'Away': { name: 'Away', modeLabel: 'away mode', icon: '&#128682;', disarmDefault: false },
+    'Disarm': { name: 'Disarm', modeLabel: 'disarm mode', icon: '&#128721;', disarmDefault: true }
+  };
+  const cfg = modeMap[mode];
+
+  // Set header
+  document.getElementById('editGroupTitle').textContent = 'Edit ' + cfg.name;
+  document.getElementById('editGroupName').value = cfg.name;
+
+  // Generate device cards
+  const container = document.getElementById('editGroupDevices');
+  container.innerHTML = '';
+  DEVICES.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'device-card';
+    card.onclick = () => openDeviceSetting(d, mode, cfg);
+    card.innerHTML =
+      '<div class="device-checkbox checked" onclick="event.stopPropagation(); toggleEditCheck(this)"></div>' +
+      '<div class="device-thumb">' + d.icon + '</div>' +
+      '<div class="device-info">' +
+        '<div class="device-name">' + d.name + '</div>' +
+        '<div class="device-mode">' + cfg.modeLabel + '</div>' +
+      '</div>' +
+      '<div class="device-arrow">&#8250;</div>';
+    container.appendChild(card);
+  });
+
+  navigateTo('pageEditGroup');
+}
+
+function saveEditGroup() {
+  showToast('Group saved!');
+  navigateTo('pageMain');
+}
+
+function toggleEditCheck(el) {
+  el.classList.toggle('checked');
+  const modeText = el.closest('.device-card').querySelector('.device-mode');
+  if (!el.classList.contains('checked')) {
+    modeText.textContent = 'custom';
+    modeText.classList.add('disarmed');
+  } else {
+    const nameInput = document.getElementById('editGroupName');
+    const modeName = nameInput.value || 'Home';
+    modeText.textContent = modeName.toLowerCase() + ' mode';
+    modeText.classList.remove('disarmed');
+  }
+}
+
+let editingDevice = null;
+function openDeviceSetting(device, mode, cfg) {
+  editingDevice = { device, mode, cfg };
+  document.getElementById('deviceSettingTitle').textContent = device.name;
+  document.getElementById('deviceSettingIcon').innerHTML = device.icon;
+  document.getElementById('deviceSettingSubtitle').textContent = device.name;
+
+  if (mode === 'Disarm') {
+    // Disarm: default checked (disabled)
+    document.getElementById('settingModeIcon').innerHTML = '&#128721;';
+    document.getElementById('settingModeText').textContent = 'Disarmed';
+    document.getElementById('settingModeText').classList.add('dimmed');
+    document.getElementById('settingDisarmBtn').classList.add('checked');
+    document.getElementById('settingSettingsArea').classList.add('disabled');
+  } else {
+    // Home/Away: not disarmed
+    document.getElementById('settingModeIcon').innerHTML = cfg.icon;
+    document.getElementById('settingModeText').textContent = cfg.name;
+    document.getElementById('settingModeText').classList.remove('dimmed');
+    document.getElementById('settingDisarmBtn').classList.remove('checked');
+    document.getElementById('settingSettingsArea').classList.remove('disabled');
+  }
+  navigateTo('pageDeviceSetting');
+}
+
+function toggleSettingDisarm() {
+  const btn = document.getElementById('settingDisarmBtn');
+  const settings = document.getElementById('settingSettingsArea');
+  const modeText = document.getElementById('settingModeText');
+  btn.classList.toggle('checked');
+  if (btn.classList.contains('checked')) {
+    settings.classList.add('disabled');
+    modeText.textContent = 'Disarmed';
+    modeText.classList.add('dimmed');
+  } else {
+    settings.classList.remove('disabled');
+    modeText.classList.remove('dimmed');
+    if (editingDevice) {
+      modeText.textContent = editingDevice.cfg.name;
+    }
+  }
+}
+
+function deleteModeFromEdit() {
+  if (!editingMode) { navigateTo('pageMain'); return; }
+  // Remove the scene card
+  const card = document.querySelector('.scene-card[data-mode="' + editingMode + '"]');
+  if (card) card.remove();
+  showToast(editingMode + ' mode deleted');
+
+  // Check if any cards remain
+  const sceneSection = document.querySelector('#sceneCardsArea .scene-section');
+  const remainingCards = sceneSection.querySelectorAll('.scene-card');
+  if (remainingCards.length === 0) {
+    document.getElementById('modeEmptyState').style.display = 'block';
+    document.getElementById('sceneCardsArea').style.display = 'none';
+  }
+  editingMode = null;
+  navigateTo('pageMain');
+}
 </script>
 
 </body>
