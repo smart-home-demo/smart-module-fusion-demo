@@ -1897,6 +1897,23 @@ function navigateTo(pageId) {
 
 // ========== Switch Mode Modal ==========
 function showSwitchModal(sceneName) {
+  // Update active scene card
+  document.querySelectorAll('#pageMain .scene-card').forEach(c => c.classList.remove('active-scene'));
+  const card = document.querySelector('#pageMain .scene-card[data-mode="' + sceneName + '"]');
+  if (card) card.classList.add('active-scene');
+
+  // Update status text
+  document.querySelectorAll('#pageMain .scene-status').forEach(s => {
+    s.textContent = s.textContent.replace('Active &middot; ', '');
+  });
+  if (card) {
+    const status = card.querySelector('.scene-status');
+    if (status && !status.innerHTML.includes('Active')) {
+      status.innerHTML = 'Active &middot; ' + status.innerHTML;
+    }
+  }
+
+  // Show result modal briefly
   const modal = document.getElementById('switchModal');
   const title = document.getElementById('switchModalTitle');
   const subtitle = document.getElementById('switchModalSubtitle');
@@ -1910,21 +1927,9 @@ function showSwitchModal(sceneName) {
     const el = document.getElementById('modalDevice' + i + 'Mode');
     if (el) el.textContent = mode;
   }
-  document.querySelectorAll('#pageMain .scene-card').forEach(c => c.classList.remove('active-scene'));
-  let card = null;
-  try { card = event.currentTarget.closest('.scene-card'); } catch(e) {}
-  if (!card) card = document.querySelector('.scene-card[data-mode="' + sceneName + '"]');
-  if (card) card.classList.add('active-scene');
-  document.querySelectorAll('#pageMain .scene-status').forEach(s => {
-    s.textContent = s.textContent.replace('Active &middot; ', '');
-  });
-  const clickedStatus = card ? card.querySelector('.scene-status') : null;
-  if (clickedStatus && !clickedStatus.innerHTML.includes('Active')) {
-    clickedStatus.innerHTML = 'Active &middot; ' + clickedStatus.innerHTML;
-  }
   modal.classList.add('show');
   // Auto-close after brief display and show result toast
-  setTimeout(() => {
+  setTimeout(function() {
     modal.classList.remove('show');
     showSwitchResult(sceneName);
   }, 1500);
