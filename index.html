@@ -1045,8 +1045,7 @@ body {
       <div class="detail-header">
         <button class="back-btn" onclick="goBackToMain()">&#8592;</button>
         <div class="detail-title">Home</div>
-        <button class="skip-link" onclick="skipMode('Home')" style="margin-right:8px;">Skip</button>
-        <button class="save-link" onclick="saveMode('Home')">Save</button>
+        <button class="skip-link" onclick="skipMode('Home')">Skip</button>
       </div>
       <div class="screen-inner">
         <div class="step-indicator">
@@ -1086,8 +1085,7 @@ body {
       <div class="detail-header">
         <button class="back-btn" onclick="goBackToMain()">&#8592;</button>
         <div class="detail-title">Away</div>
-        <button class="skip-link" onclick="skipMode('Away')" style="margin-right:8px;">Skip</button>
-        <button class="save-link" onclick="saveMode('Away')">Save</button>
+        <button class="skip-link" onclick="skipMode('Away')">Skip</button>
       </div>
       <div class="screen-inner">
         <div class="step-indicator">
@@ -1127,8 +1125,7 @@ body {
       <div class="detail-header">
         <button class="back-btn" onclick="goBackToMain()">&#8592;</button>
         <div class="detail-title">Disarmed</div>
-        <button class="skip-link" onclick="skipMode('Disarm')" style="margin-right:8px;">Skip</button>
-        <button class="save-link" onclick="saveMode('Disarm')">Save</button>
+        <button class="skip-link" onclick="skipMode('Disarm')">Skip</button>
       </div>
       <div class="screen-inner">
         <div class="step-indicator">
@@ -1794,11 +1791,6 @@ function skipMode(mode) {
   advanceToNext();
 }
 
-function saveMode(mode) {
-  enabledModes.push(mode);
-  showToast(mode + ' mode saved!');
-  advanceToNext();
-}
 
 function submitAllModes() {
   enabledModes.push('Disarm');
