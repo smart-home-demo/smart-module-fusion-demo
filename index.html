@@ -1378,7 +1378,7 @@ body {
       <div class="detail-header">
         <button class="back-btn" onclick="navigateTo('pageEditGroup')">&#8592;</button>
         <div class="detail-title" id="deviceSettingTitle">eufyCam S3 Pro</div>
-        <div style="width:32px;"></div>
+        <button class="save-link" onclick="saveDeviceSetting()">Save</button>
       </div>
       <div class="screen-inner">
         <div class="mode-setting-header">
@@ -2715,6 +2715,11 @@ function openDeviceSetting(device, mode, cfg) {
     document.getElementById('settingSettingsArea').classList.remove('disabled');
   }
   navigateTo('pageDeviceSetting');
+}
+
+function saveDeviceSetting() {
+  showToast('Device settings saved!');
+  navigateTo('pageEditGroup');
 }
 
 function toggleSettingDisarm() {
