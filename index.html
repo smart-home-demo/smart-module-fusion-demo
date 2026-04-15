@@ -482,11 +482,12 @@ body {
   padding: 0 20px 0;
 }
 .calendar-icon-btn {
-  width: 28px; height: 28px; border-radius: 8px; border: none; background: #f0f7ff;
-  color: #2196F3; font-size: 16px; cursor: pointer; display: flex; align-items: center;
-  justify-content: center; transition: background 0.2s;
+  padding: 6px 14px; border-radius: 16px; border: none; background: #2196F3;
+  color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; display: flex;
+  align-items: center; gap: 4px; transition: background 0.2s; white-space: nowrap;
 }
-.calendar-icon-btn:hover { background: #e0f0ff; }
+.calendar-icon-btn:hover { background: #1976D2; }
+.calendar-icon-btn .cal-icon { font-size: 14px; }
 
 /* Automation detail */
 .automation-detail-section-title {
@@ -2097,7 +2098,7 @@ function renderAutomationCards() {
     let html = '<div class="automation-section-header">' +
       '<div class="section-title">Automation</div>';
     if (hasModes) {
-      html += '<button class="calendar-icon-btn" onclick="openScheduleCalendar()">&#128197;</button>';
+      html += '<button class="calendar-icon-btn" onclick="openScheduleCalendar()"><span class="cal-icon">&#128197;</span>Schedule</button>';
     }
     html += '</div>' +
       '<div class="automation-empty">' +
@@ -2111,7 +2112,7 @@ function renderAutomationCards() {
 
   let html = '<div class="automation-section-header">' +
     '<div class="section-title">Automation</div>' +
-    '<button class="calendar-icon-btn" onclick="openScheduleCalendar()">&#128197;</button>' +
+    '<button class="calendar-icon-btn" onclick="openScheduleCalendar()"><span class="cal-icon">&#128197;</span>Schedule</button>' +
   '</div>';
   savedAutomations.forEach((a, idx) => {
     const ruleBadges = a.actions.map(act => {
