@@ -2715,7 +2715,7 @@ function openEditGroup(mode) {
     card.onclick = () => openDeviceSetting(d, mode, cfg);
     // Mock: first device fails when switching to this mode
     const isFailed = idx === 0;
-    const statusLabel = isFailed ? 'Not enabled' : 'Enabled';
+    const statusLabel = isFailed ? 'Failed' : 'Applied';
     const statusClass = isFailed ? 'device-status-failed' : 'device-status-enabled';
     card.innerHTML =
       '<div class="device-checkbox checked" onclick="event.stopPropagation(); toggleEditCheck(this)"></div>' +
@@ -2742,7 +2742,7 @@ function retryDevice(btn, deviceName, mode) {
     if (card) {
       const statusEl = card.querySelector('.device-status');
       if (statusEl) {
-        statusEl.textContent = 'Enabled';
+        statusEl.textContent = 'Applied';
         statusEl.classList.remove('device-status-failed');
         statusEl.classList.add('device-status-enabled');
       }
@@ -2762,13 +2762,13 @@ function toggleEditCheck(el) {
   const statusEl = el.closest('.device-card').querySelector('.device-status');
   if (!el.classList.contains('checked')) {
     if (statusEl) {
-      statusEl.textContent = 'Disabled';
+      statusEl.textContent = 'Not applied';
       statusEl.classList.remove('device-status-enabled');
       statusEl.classList.add('device-status-failed');
     }
   } else {
     if (statusEl) {
-      statusEl.textContent = 'Enabled';
+      statusEl.textContent = 'Applied';
       statusEl.classList.remove('device-status-failed');
       statusEl.classList.add('device-status-enabled');
     }
