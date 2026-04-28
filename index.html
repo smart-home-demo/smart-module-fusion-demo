@@ -312,6 +312,17 @@ body {
 .device-name { font-size: 14px; font-weight: 500; }
 .device-mode { font-size: 12px; color: #2196F3; margin-top: 2px; }
 .device-mode.disarmed { color: #999; }
+.device-status { font-size: 12px; margin-top: 2px; }
+.device-status-enabled { color: #4CAF50; }
+.device-status-failed { color: #e53935; }
+.device-retry-btn {
+  width: 24px; height: 24px; border-radius: 12px; border: none; background: #f5f5f5;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  margin-right: 8px; font-size: 12px; color: #666; transition: all 0.2s;
+}
+.device-retry-btn:hover { background: #e0e0e0; color: #333; }
+.device-retry-btn.retry-spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .device-arrow { color: #ccc; font-size: 16px; }
 
 /* Enable Mode button */
@@ -1912,9 +1923,12 @@ function showSwitchModal(sceneName) {
   const card = document.querySelector('#pageMain .scene-card[data-mode="' + sceneName + '"]');
   if (card) card.classList.add('active-scene');
 
-  // Update status text
-  document.querySelectorAll('#pageMain .scene-status').forEach(s => {
-    s.textContent = s.textContent.replace('Active &middot; ', '');
+  // Update status text - remove 'Active' prefix from all cards first
+  document.querySelectorAll('#pageMain .scene-card').forEach(c => {
+    const status = c.querySelector('.scene-status');
+    if (status) {
+      status.innerHTML = status.innerHTML.replace('Active &middot; ', '');
+    }
   });
   if (card) {
     const status = card.querySelector('.scene-status');
@@ -2689,28 +2703,53 @@ function openEditGroup(mode) {
   const cfg = modeMap[mode];
 
   // Set header
-  document.getElementById('editGroupTitle').textContent = 'Edit ' + cfg.name;
+  document.getElementById('editGroupTitle').textContent = 'Edit Mode';
   document.getElementById('editGroupName').value = cfg.name;
 
   // Generate device cards
   const container = document.getElementById('editGroupDevices');
   container.innerHTML = '';
-  DEVICES.forEach(d => {
+  DEVICES.forEach((d, idx) => {
     const card = document.createElement('div');
     card.className = 'device-card';
     card.onclick = () => openDeviceSetting(d, mode, cfg);
+    // Mock: first device fails when switching to this mode
+    const isFailed = idx === 0;
+    const statusLabel = isFailed ? 'Not enabled' : 'Enabled';
+    const statusClass = isFailed ? 'device-status-failed' : 'device-status-enabled';
     card.innerHTML =
       '<div class="device-checkbox checked" onclick="event.stopPropagation(); toggleEditCheck(this)"></div>' +
       '<div class="device-thumb">' + d.icon + '</div>' +
       '<div class="device-info">' +
         '<div class="device-name">' + d.name + '</div>' +
-        '<div class="device-mode">' + cfg.modeLabel + '</div>' +
+        '<div class="device-status ' + statusClass + '">' + statusLabel + '</div>' +
       '</div>' +
+      (isFailed ? '<button class="device-retry-btn" onclick="event.stopPropagation(); retryDevice(this, \'' + d.name + '\', \'' + mode + '\')" title="Retry">&#128260;</button>' : '') +
       '<div class="device-arrow">&#8250;</div>';
     container.appendChild(card);
   });
 
   navigateTo('pageEditGroup');
+}
+
+function retryDevice(btn, deviceName, mode) {
+  // Simulate retrying the device mode switch
+  btn.classList.add('retry-spin');
+  setTimeout(function() {
+    btn.classList.remove('retry-spin');
+    // Update status to enabled
+    const card = btn.closest('.device-card');
+    if (card) {
+      const statusEl = card.querySelector('.device-status');
+      if (statusEl) {
+        statusEl.textContent = 'Enabled';
+        statusEl.classList.remove('device-status-failed');
+        statusEl.classList.add('device-status-enabled');
+      }
+      btn.remove();
+    }
+    showToast(deviceName + ' switched to ' + mode + ' mode successfully');
+  }, 800);
 }
 
 function saveEditGroup() {
@@ -2720,15 +2759,19 @@ function saveEditGroup() {
 
 function toggleEditCheck(el) {
   el.classList.toggle('checked');
-  const modeText = el.closest('.device-card').querySelector('.device-mode');
+  const statusEl = el.closest('.device-card').querySelector('.device-status');
   if (!el.classList.contains('checked')) {
-    modeText.textContent = 'custom';
-    modeText.classList.add('disarmed');
+    if (statusEl) {
+      statusEl.textContent = 'Disabled';
+      statusEl.classList.remove('device-status-enabled');
+      statusEl.classList.add('device-status-failed');
+    }
   } else {
-    const nameInput = document.getElementById('editGroupName');
-    const modeName = nameInput.value || 'Home';
-    modeText.textContent = modeName.toLowerCase() + ' mode';
-    modeText.classList.remove('disarmed');
+    if (statusEl) {
+      statusEl.textContent = 'Enabled';
+      statusEl.classList.remove('device-status-failed');
+      statusEl.classList.add('device-status-enabled');
+    }
   }
 }
 
