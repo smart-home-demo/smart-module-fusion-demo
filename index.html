@@ -312,10 +312,11 @@ body {
 .device-name { font-size: 14px; font-weight: 500; }
 .device-mode { font-size: 12px; color: #2196F3; margin-top: 2px; }
 .device-mode.disarmed { color: #999; }
-.device-status { font-size: 12px; margin-top: 2px; }
-.device-status-enabled { color: #4CAF50; }
-.device-status-failed { color: #e53935; }
-.device-status-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.device-status { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+.device-status-enabled { background: #e8f5e9; color: #4CAF50; }
+.device-status-failed { background: #ffebee; color: #e53935; }
+.device-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.device-actions { font-size: 12px; color: #666; line-height: 1.4; }
 .device-retry-btn {
   width: 24px; height: 24px; border-radius: 12px; border: none; background: #f5f5f5;
   display: flex; align-items: center; justify-content: center; cursor: pointer;
@@ -2710,6 +2711,13 @@ function openEditGroup(mode) {
   // Generate device cards
   const container = document.getElementById('editGroupDevices');
   container.innerHTML = '';
+  const deviceActions = {
+    'Front Door Camera': ['Privacy Mode: Off', 'Video Recording', 'Notification', 'Camera Alarm'],
+    'Backyard Camera': ['Privacy Mode: Off', 'Video Recording', 'Notification'],
+    'Garage Camera': ['Privacy Mode: Off', 'Video Recording'],
+    'Front Door Lock': ['Auto-lock: On', 'Notification'],
+    'HomeBase HB3': ['Monitoring: On']
+  };
   DEVICES.forEach((d, idx) => {
     const card = document.createElement('div');
     card.className = 'device-card';
@@ -2719,15 +2727,18 @@ function openEditGroup(mode) {
     const statusLabel = isFailed ? 'Failed' : 'Enabled';
     const statusClass = isFailed ? 'device-status-failed' : 'device-status-enabled';
     const retryBtn = isFailed ? '<button class="device-retry-btn" onclick="event.stopPropagation(); retryDevice(this, \'' + d.name + '\', \'' + mode + '\')" title="Retry">&#128260;</button>' : '';
+    const actions = deviceActions[d.name] || [];
+    const actionsText = actions.join(' · ');
     card.innerHTML =
       '<div class="device-checkbox checked" onclick="event.stopPropagation(); toggleEditCheck(this)"></div>' +
       '<div class="device-thumb">' + d.icon + '</div>' +
       '<div class="device-info">' +
-        '<div class="device-name">' + d.name + '</div>' +
-        '<div class="device-status-row">' +
+        '<div class="device-name-row">' +
+          '<span class="device-name">' + d.name + '</span>' +
           '<span class="device-status ' + statusClass + '">' + statusLabel + '</span>' +
           retryBtn +
         '</div>' +
+        '<div class="device-actions">' + actionsText + '</div>' +
       '</div>' +
       '<div class="device-arrow">&#8250;</div>';
     container.appendChild(card);
@@ -2766,13 +2777,13 @@ function toggleEditCheck(el) {
   const statusEl = el.closest('.device-card').querySelector('.device-status');
   if (!el.classList.contains('checked')) {
     if (statusEl) {
-      statusEl.textContent = 'Not applied';
+      statusEl.textContent = 'Disabled';
       statusEl.classList.remove('device-status-enabled');
       statusEl.classList.add('device-status-failed');
     }
   } else {
     if (statusEl) {
-      statusEl.textContent = 'Applied';
+      statusEl.textContent = 'Enabled';
       statusEl.classList.remove('device-status-failed');
       statusEl.classList.add('device-status-enabled');
     }
