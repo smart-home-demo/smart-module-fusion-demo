@@ -1178,7 +1178,7 @@ body {
         <div class="mode-setting-header">
           <div class="device-detail-image" id="deviceDetailHomeIcon">&#128249;</div>
           <div class="device-detail-name" id="deviceDetailHomeName">Front Door Camera</div>
-          <div class="device-detail-desc">You can enable home mode when people are home, set the behavior of each device at this mode.</div>
+          <div class="device-detail-desc">Set the behavior of the device at this mode.</div>
         </div>
         <div class="disarm-btn-wrapper">
           <div class="disarm-mode-label">
@@ -1342,7 +1342,7 @@ body {
         <div class="mode-setting-header">
           <div class="device-detail-image" id="homebaseDetailIcon">&#127968;</div>
           <div class="device-detail-name" id="homebaseDetailName">HomeBase 3</div>
-          <div class="device-detail-desc" id="homebaseDetailDesc">Manage connected sub-devices.</div>
+          <div class="device-detail-desc" id="homebaseDetailDesc">Set the behavior of the device at this mode.</div>
         </div>
         <div class="settings-area">
           <div class="setting-section">
@@ -1783,15 +1783,21 @@ function populateDevices(mode) {
   const cfg = MODE_CONFIG[mode];
   const container = document.getElementById(cfg.containerId);
   container.innerHTML = '';
+  const deviceActions = {
+    'Camera': { 'Home': 'Privacy On · Video · Notification', 'Away': 'Video · Notification · Alarm', 'Disarm': 'All Off' },
+    'HomeBase 3': { 'Home': 'Siren Off · Monitoring', 'Away': 'Full Security · All On', 'Disarm': 'All Off' }
+  };
   DEVICES.forEach(d => {
     const card = document.createElement('div');
     card.className = 'device-card';
     card.onclick = () => openDeviceDetail(d, mode);
+    const actionsText = deviceActions[d.name] ? deviceActions[d.name][mode] : '';
     card.innerHTML =
       '<div class="device-checkbox checked" onclick="event.stopPropagation(); toggleCheck(this)"></div>' +
       '<div class="device-thumb">' + d.icon + '</div>' +
       '<div class="device-info">' +
         '<div class="device-name">' + d.name + '</div>' +
+        '<div class="device-mode" style="color:#666;font-size:11px;margin-top:2px;">' + actionsText + '</div>' +
       '</div>' +
       '<div class="device-arrow">&#8250;</div>';
     container.appendChild(card);
@@ -1877,13 +1883,7 @@ function openHomeBaseDetail(device, mode) {
 
   // Set mode description
   const descEl = document.getElementById('homebaseDetailDesc');
-  if (mode === 'Home') {
-    descEl.textContent = 'You can enable home mode when people are home, set the behavior of each device at this mode.';
-  } else if (mode === 'Away') {
-    descEl.textContent = 'You can enable away mode when no one is home, set the behavior of each device at this mode.';
-  } else if (mode === 'Disarm') {
-    descEl.textContent = 'Disable all devices at this mode.';
-  }
+  descEl.textContent = 'Set the behavior of the device at this mode.';
 
   // Store for save
   window._currentDevice = device;
@@ -2781,15 +2781,21 @@ function openEditGroup(mode) {
     'Camera': ['Privacy Mode: Off', 'Video Recording', 'Notification', 'Camera Alarm'],
     'HomeBase 3': ['Smart Light', 'Motion Sensor', 'Door Sensor', 'Siren']
   };
+  // Check if this mode is the currently active mode
+  const activeModeCard = document.querySelector('#sceneCardsArea .scene-card.active-scene');
+  const isCurrentActiveMode = activeModeCard && activeModeCard.getAttribute('data-mode') === mode;
+
   DEVICES.forEach((d, idx) => {
     const card = document.createElement('div');
     card.className = 'device-card';
     card.onclick = () => openDeviceSetting(d, mode, cfg);
-    // Mock: first device fails when switching to this mode
-    const isFailed = idx === 0;
+    // Only show status label for current active mode
+    const isFailed = idx === 0 && isCurrentActiveMode;
     const statusLabel = isFailed ? 'Failed' : 'Enabled';
     const statusClass = isFailed ? 'device-status-failed' : 'device-status-enabled';
-    const retryBtn = isFailed ? '<button class="device-retry-btn" onclick="event.stopPropagation(); retryDevice(this, \'' + d.name + '\', \'' + mode + '\')" title="Retry">&#128260;</button>' : '';
+    const statusHtml = isCurrentActiveMode ?
+      '<span class="device-status ' + statusClass + '">' + statusLabel + '</span>' +
+      (isFailed ? '<button class="device-retry-btn" onclick="event.stopPropagation(); retryDevice(this, \'' + d.name + '\', \'' + mode + '\')" title="Retry">&#128260;</button>' : '') : '';
     const actions = deviceActions[d.name] || [];
     const actionsText = actions.join(' · ');
     card.innerHTML =
@@ -2798,8 +2804,7 @@ function openEditGroup(mode) {
       '<div class="device-info">' +
         '<div class="device-name-row">' +
           '<span class="device-name">' + d.name + '</span>' +
-          '<span class="device-status ' + statusClass + '">' + statusLabel + '</span>' +
-          retryBtn +
+          statusHtml +
         '</div>' +
         '<div class="device-actions">' + actionsText + '</div>' +
       '</div>' +
@@ -2862,13 +2867,7 @@ function openDeviceSetting(device, mode, cfg) {
 
   // Set mode description
   const descEl = document.getElementById('deviceSettingDesc');
-  if (mode === 'Home') {
-    descEl.textContent = 'You can enable home mode when people are home, set the behavior of each device at this mode.';
-  } else if (mode === 'Away') {
-    descEl.textContent = 'You can enable away mode when no one is home, set the behavior of each device at this mode.';
-  } else if (mode === 'Disarm') {
-    descEl.textContent = 'Disable all devices at this mode.';
-  }
+  descEl.textContent = 'Set the behavior of the device at this mode.';
 
   if (mode === 'Disarm') {
     // Disarm: default checked (disabled)
