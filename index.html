@@ -977,7 +977,7 @@ body {
               <div class="scene-card active-scene" data-mode="Home">
                 <div class="scene-card-left">
                   <div class="scene-icon home">&#127968;</div>
-                  <div><div class="scene-name">Home</div><div class="scene-status">Active &middot; 4 devices</div></div>
+                  <div><div class="scene-name">Home</div><div class="scene-status">Active &middot; 2 devices</div></div>
                 </div>
                 <div class="scene-card-right">
                   <button class="scene-settings" onclick="event.stopPropagation(); editCardFromButton(this)">&#9881;&#65039;</button>
@@ -986,7 +986,7 @@ body {
               <div class="scene-card" data-mode="Away">
                 <div class="scene-card-left">
                   <div class="scene-icon away">&#128274;</div>
-                  <div><div class="scene-name">Away</div><div class="scene-status">5 devices</div></div>
+                  <div><div class="scene-name">Away</div><div class="scene-status">2 devices</div></div>
                 </div>
                 <div class="scene-card-right">
                   <button class="scene-settings" onclick="event.stopPropagation(); editCardFromButton(this)">&#9881;&#65039;</button>
@@ -995,7 +995,7 @@ body {
               <div class="scene-card" data-mode="Disarm">
                 <div class="scene-card-left">
                   <div class="scene-icon disarm">&#128737;&#65039;</div>
-                  <div><div class="scene-name">Disarm</div><div class="scene-status">5 devices</div></div>
+                  <div><div class="scene-name">Disarm</div><div class="scene-status">2 devices</div></div>
                 </div>
                 <div class="scene-card-right">
                   <button class="scene-settings" onclick="event.stopPropagation(); editCardFromButton(this)">&#9881;&#65039;</button>
@@ -1033,11 +1033,8 @@ body {
         <div class="switch-modal" onclick="event.stopPropagation()">
           <div class="switch-modal-title" id="switchModalTitle">Home</div>
           <div class="switch-modal-subtitle" id="switchModalSubtitle">Mode was changed to "Home" at 09:35 AM.</div>
-          <div class="switch-modal-device"><div class="switch-modal-device-name">Front Door Camera</div><div class="switch-modal-device-mode" id="modalDevice1Mode">Home</div></div>
-          <div class="switch-modal-device"><div class="switch-modal-device-name">Backyard Camera</div><div class="switch-modal-device-mode" id="modalDevice2Mode">Home</div></div>
-          <div class="switch-modal-device"><div class="switch-modal-device-name">Garage Camera</div><div class="switch-modal-device-mode" id="modalDevice3Mode">Home</div></div>
-          <div class="switch-modal-device"><div class="switch-modal-device-name">Front Door Lock</div><div class="switch-modal-device-mode" id="modalDevice4Mode">Home</div></div>
-          <div class="switch-modal-device"><div class="switch-modal-device-name">HomeBase HB3</div><div class="switch-modal-device-status">Offline</div><div class="switch-modal-device-mode" id="modalDevice5Mode">Home</div></div>
+          <div class="switch-modal-device"><div class="switch-modal-device-name">Camera</div><div class="switch-modal-device-mode" id="modalDevice1Mode">Home</div></div>
+          <div class="switch-modal-device"><div class="switch-modal-device-name">HomeBase 3</div><div class="switch-modal-device-status">Offline</div><div class="switch-modal-device-mode" id="modalDevice2Mode">Home</div></div>
           <button class="switch-modal-close" onclick="closeSwitchModal()">Close</button>
         </div>
       </div>
@@ -1195,11 +1192,6 @@ body {
         </div>
         <div class="settings-area">
           <div class="setting-section">
-            <div class="setting-section-title">Alarm rules</div>
-            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#9200;</div><div class="setting-label">Alarm Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
-            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128694;</div><div class="setting-label">Leaving Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
-          </div>
-          <div class="setting-section">
             <div class="setting-section-title">Set devices rules in this security mode</div>
             <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128065;</div><div class="setting-label">Privacy Mode</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
             <div class="setting-row"><div style="font-size:12px;color:#999;padding-left:38px;width:100%;">When motion is detected</div></div>
@@ -1240,11 +1232,6 @@ body {
         </div>
         <div class="settings-area">
           <div class="setting-section">
-            <div class="setting-section-title">Alarm rules</div>
-            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#9200;</div><div class="setting-label">Alarm Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
-            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128694;</div><div class="setting-label">Leaving Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
-          </div>
-          <div class="setting-section">
             <div class="setting-section-title">Set devices rules in this security mode</div>
             <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128065;</div><div class="setting-label">Privacy Mode</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
             <div class="setting-row"><div style="font-size:12px;color:#999;padding-left:38px;width:100%;">When motion is detected</div></div>
@@ -1284,11 +1271,6 @@ body {
           </div>
         </div>
         <div class="settings-area disabled">
-          <div class="setting-section">
-            <div class="setting-section-title">Alarm rules</div>
-            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#9200;</div><div class="setting-label">Alarm Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
-            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128694;</div><div class="setting-label">Leaving Delay</div></div><div class="setting-value">0s <span style="color:#ccc">&#8250;</span></div></div>
-          </div>
           <div class="setting-section">
             <div class="setting-section-title">Set devices rules in this security mode</div>
             <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128065;</div><div class="setting-label">Privacy Mode</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
@@ -1343,6 +1325,37 @@ body {
             <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128161;</div><div class="setting-label">Light Alarm</div></div><span class="disabled-text">Light is disabled</span></div>
             <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128264;</div><div class="setting-label">HomeBase Alarm</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
             <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#129726;</div><div class="setting-label">Monitoring Center Help</div></div><div class="checkbox-setting" onclick="toggleSettingCheck(this)"></div></div>
+          </div>
+          <div class="help-link">Learn how to set it up &gt;&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEVICE DETAIL: HomeBase 3 ===== -->
+    <div class="page" id="pageHomeBaseDetail">
+      <div class="detail-header">
+        <button class="back-btn" onclick="goBackFromHomeBase()">&#8592;</button>
+        <div class="detail-title" id="homebaseDetailTitle">HomeBase 3</div>
+        <button class="save-link" onclick="saveHomeBaseSetting()">Save</button>
+      </div>
+      <div class="screen-inner">
+        <div class="mode-setting-header">
+          <div class="device-detail-image" id="homebaseDetailIcon">&#127968;</div>
+          <div class="device-detail-name" id="homebaseDetailName">HomeBase 3</div>
+          <div class="device-detail-desc" id="homebaseDetailDesc">Manage connected sub-devices.</div>
+        </div>
+        <div class="settings-area">
+          <div class="setting-section">
+            <div class="setting-section-title">Connected Sub-devices</div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128161;</div><div class="setting-label">Smart Light</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#127775;</div><div class="setting-label">Motion Sensor</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128275;</div><div class="setting-label">Door Sensor</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128293;</div><div class="setting-label">Siren</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+          </div>
+          <div class="setting-section">
+            <div class="setting-section-title">HomeBase Settings</div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128264;</div><div class="setting-label">Alarm Sound</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
+            <div class="setting-row"><div class="setting-row-left"><div class="setting-icon">&#128276;</div><div class="setting-label">Notification</div></div><div class="checkbox-setting checked" onclick="toggleSettingCheck(this)"></div></div>
           </div>
           <div class="help-link">Learn how to set it up &gt;&gt;</div>
         </div>
@@ -1730,7 +1743,7 @@ body {
             <button class="schedule-recommend-btn" onclick="applyMigrationSchedule()">Add</button>
           </div>
         </div>
-        <div class="migration-footer-text">Based on your previous settings for 3 devices</div>
+        <div class="migration-footer-text">Based on your previous settings for 2 devices</div>
         <button class="migration-confirm-btn" onclick="showToast('Configuration saved! Migration complete.'); navigateTo('pageMain')">Set Up Now</button>
       </div>
     </div>
@@ -1749,11 +1762,8 @@ const MODE_CONFIG = {
   Disarm: { icon: '&#128721;', desc: 'Turn off all monitoring and recording', modeLabel: 'Disarmed', pageId: 'pageSetupDisarm', containerId: 'disarmDevices' }
 };
 const DEVICES = [
-  { icon: '&#128249;', name: 'Front Door Camera', mode: 'Home' },
-  { icon: '&#128247;', name: 'Backyard Camera', mode: 'Away' },
-  { icon: '&#128663;', name: 'Garage Camera', mode: 'Home' },
-  { icon: '&#128682;', name: 'Front Door Lock', mode: 'Home' },
-  { icon: '&#127968;', name: 'HomeBase HB3', mode: 'Home' }
+  { icon: '&#128249;', name: 'Camera', mode: 'Home', type: 'camera' },
+  { icon: '&#127968;', name: 'HomeBase 3', mode: 'Home', type: 'homebase' }
 ];
 
 let currentStep = 0;
@@ -1836,6 +1846,12 @@ function goBackToMain() {
 }
 
 function openDeviceDetail(device, mode) {
+  // Check if it's HomeBase 3
+  if (device.type === 'homebase') {
+    openHomeBaseDetail(device, mode);
+    return;
+  }
+
   const pageMap = {
     'Home': 'pageDeviceDetailHome',
     'Away': 'pageDeviceDetailAway',
@@ -1851,6 +1867,56 @@ function openDeviceDetail(device, mode) {
   window._currentMode = mode;
 
   navigateTo(pageId);
+}
+
+// HomeBase 3 detail page
+function openHomeBaseDetail(device, mode) {
+  document.getElementById('homebaseDetailTitle').textContent = device.name;
+  document.getElementById('homebaseDetailIcon').innerHTML = device.icon;
+  document.getElementById('homebaseDetailName').textContent = device.name;
+
+  // Set mode description
+  const descEl = document.getElementById('homebaseDetailDesc');
+  if (mode === 'Home') {
+    descEl.textContent = 'You can enable home mode when people are home, set the behavior of each device at this mode.';
+  } else if (mode === 'Away') {
+    descEl.textContent = 'You can enable away mode when no one is home, set the behavior of each device at this mode.';
+  } else if (mode === 'Disarm') {
+    descEl.textContent = 'Disable all devices at this mode.';
+  }
+
+  // Store for save
+  window._currentDevice = device;
+  window._currentMode = mode;
+
+  navigateTo('pageHomeBaseDetail');
+}
+
+function saveHomeBaseSetting() {
+  showToast('HomeBase settings saved!');
+  const mode = window._currentMode;
+  if (mode) {
+    const pageMap = {
+      'Home': 'pageSetupHome',
+      'Away': 'pageSetupAway',
+      'Disarm': 'pageSetupDisarm'
+    };
+    navigateTo(pageMap[mode]);
+  }
+}
+
+function goBackFromHomeBase() {
+  const mode = window._currentMode;
+  if (mode) {
+    const pageMap = {
+      'Home': 'pageSetupHome',
+      'Away': 'pageSetupAway',
+      'Disarm': 'pageSetupDisarm'
+    };
+    navigateTo(pageMap[mode]);
+  } else {
+    navigateTo('pageMain');
+  }
 }
 
 // Save handlers for mode-specific device detail pages
@@ -1949,7 +2015,7 @@ function showSwitchModal(sceneName) {
   subtitle.textContent = 'Mode was changed to "' + sceneName + '" at ' + timeStr + '.';
   const modeMap = { 'Home': 'Home', 'Away': 'Away', 'Disarm': 'Disarm', 'Vacation': 'Away' };
   const mode = modeMap[sceneName] || sceneName;
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 2; i++) {
     const el = document.getElementById('modalDevice' + i + 'Mode');
     if (el) el.textContent = mode;
   }
@@ -2712,11 +2778,8 @@ function openEditGroup(mode) {
   const container = document.getElementById('editGroupDevices');
   container.innerHTML = '';
   const deviceActions = {
-    'Front Door Camera': ['Privacy Mode: Off', 'Video Recording', 'Notification', 'Camera Alarm'],
-    'Backyard Camera': ['Privacy Mode: Off', 'Video Recording', 'Notification'],
-    'Garage Camera': ['Privacy Mode: Off', 'Video Recording'],
-    'Front Door Lock': ['Auto-lock: On', 'Notification'],
-    'HomeBase HB3': ['Monitoring: On']
+    'Camera': ['Privacy Mode: Off', 'Video Recording', 'Notification', 'Camera Alarm'],
+    'HomeBase 3': ['Smart Light', 'Motion Sensor', 'Door Sensor', 'Siren']
   };
   DEVICES.forEach((d, idx) => {
     const card = document.createElement('div');
