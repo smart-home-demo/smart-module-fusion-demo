@@ -1927,13 +1927,18 @@ function showSwitchModal(sceneName) {
   document.querySelectorAll('#pageMain .scene-card').forEach(c => {
     const status = c.querySelector('.scene-status');
     if (status) {
-      status.innerHTML = status.innerHTML.replace('Active &middot; ', '');
+      const text = status.textContent;
+      if (text.includes('Active ·')) {
+        status.textContent = text.replace('Active · ', '');
+      } else if (text.includes('Active &middot;')) {
+        status.innerHTML = status.innerHTML.replace('Active &middot; ', '');
+      }
     }
   });
   if (card) {
     const status = card.querySelector('.scene-status');
-    if (status && !status.innerHTML.includes('Active')) {
-      status.innerHTML = 'Active &middot; ' + status.innerHTML;
+    if (status && !status.textContent.includes('Active')) {
+      status.textContent = 'Active · ' + status.textContent;
     }
   }
 
